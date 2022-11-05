@@ -6,11 +6,30 @@ from django.dispatch import receiver
 
 
 UNIT = (
-    (1, '')
+    (1, 'kilogram'),
+    (2, 'liter'),
+    (3, 'cup'),
+    (4, 'pinch'),
+    (5, 'tablespoon'),
+    (6, 'teaspoon'),
+    (7, 'pint'),
+    (8, 'pound'),
 )
 
 FOODCAT = (
-    (1, '')
+    (1, 'other'),
+    (2, 'dairy and eggs'),
+    (3, 'vegetables'),
+    (4, 'fruits'),
+    (5, 'spices and herbs'),
+    (6, 'oils and fats'),
+    (7, 'flours and starches'),
+    (8, 'grains'),
+    (9, 'nuts and seeds'),
+    (10, 'meat'),
+    (11, 'legumes'),
+    (12, 'fishes and seafood'),
+    (13, 'pasta, rice and pulses'),
 )
 
 
@@ -31,11 +50,28 @@ class Ingredient(models.Model):
 
 
 RECIPE_CATEGORY = (
-    (1, '')
+    (1, 'breakfast'),
+    (2, 'lunch'),
+    (3, 'beverage'),
+    (4, 'appetizer'),
+    (5, 'soup'),
+    (6, 'salad'),
+    (7, 'main dish'),
+    (8, 'side dish'),
+    (9, 'dessert'),
+    (10, 'snack'),
+    (11, 'baked-good'),
+    (12, 'holiday'),
+    (13, 'sauces and dips')
 )
 
-FOODTYPE = (
-    (1, '')
+DIET_TYPE = (
+    (1, 'standard'),
+    (2, 'vegan'),
+    (3, 'vegetarian'),
+    (4, 'pescetarian'),
+    (5, 'keto'),
+    (6, 'carnivore'),
 )
 
 class RecipeManager(models.Manager):
@@ -51,7 +87,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients')
     description = models.TextField()
     category = models.SmallIntegerField(choices=RECIPE_CATEGORY)
-    type = models.SmallIntegerField(choices=FOODTYPE)
+    type = models.SmallIntegerField(choices=DIET_TYPE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -131,7 +167,7 @@ SEX = (
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField()
-    food_preference = models.SmallIntegerField(choices=FOODTYPE)
+    food_preference = models.SmallIntegerField(choices=DIET_TYPE)
     height = models.SmallIntegerField()
     weight = models.SmallIntegerField()
     sex = models.SmallIntegerField(choices=SEX)
