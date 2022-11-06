@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from multiselectfield import MultiSelectField
 
 
 UNIT = (
@@ -74,6 +75,7 @@ DIET_TYPE = (
     (6, 'carnivore'),
 )
 
+
 class RecipeManager(models.Manager):
     def search(self, query=None):
         if query is None or query == "":
@@ -87,7 +89,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients')
     description = models.TextField()
     category = models.SmallIntegerField(choices=RECIPE_CATEGORY)
-    type = models.SmallIntegerField(choices=DIET_TYPE)
+    type = MultiSelectField(choices=DIET_TYPE, max_length=5)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -143,7 +145,13 @@ DAYS = (
 
 
 MEALS = (
-    (1, '')
+    (1, 'breakfast'),
+    (2, 'brunch'),
+    (3, 'snack 1'),
+    (4, 'lunch'),
+    (5, 'snack 2'),
+    (6, 'supper'),
+    (7, 'dinner'),
 )
 
 
@@ -166,8 +174,8 @@ SEX = (
 
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField()
-    food_preference = models.SmallIntegerField(choices=DIET_TYPE)
+    birth_date = models.DateField(null=True)
+    food_preference = MultiSelectField(choices=DIET_TYPE, max_length=5)
     height = models.SmallIntegerField()
     weight = models.SmallIntegerField()
     sex = models.SmallIntegerField(choices=SEX)
@@ -186,16 +194,16 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    instance.fitubiuser.save()
 
 
 class UserRecipes(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(FitUbiUser, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
 
 
 class UserPlans(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(FitUbiUser, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 
 

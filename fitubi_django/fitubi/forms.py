@@ -1,6 +1,12 @@
 from django import forms
 from django.forms import ModelForm
-from .models import User, FitUbiUser, Ingredient, Recipe, Article, Plan, FOODTYPE, RecipePlan
+from .models import User, FitUbiUser, Ingredient, Recipe, Article, Plan, RecipePlan
+
+
+class LoginForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
 
 
 class UserForm(ModelForm):
@@ -10,7 +16,6 @@ class UserForm(ModelForm):
 
 
 class FitUbiUserForm(ModelForm):
-    food_preference = forms.MultipleChoiceField(choices=FOODTYPE)
     class Meta:
         model = FitUbiUser
         fields = ['birth_date', 'food_preference', 'height', 'weight', 'sex']
