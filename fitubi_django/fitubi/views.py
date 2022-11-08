@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.contrib.auth import authenticate, login
 from django.views import View
+
+import random
+
 from .models import User
 from .forms import *
 
@@ -14,7 +17,7 @@ class StartPageView(View):
         elif "login" in request.POST:
             return redirect("login")
         else:
-            return render(request, "main.html")
+            return redirect('main')
 
 
 class LoginView(View):
@@ -64,7 +67,25 @@ class NewAccountView(View):
 
 class MainPageView(View):
     def get(self, request):
-        return render(request, "main.html")
+        recipes_all = list(Recipe.objects.all())
+        random.shuffle(recipes_all)
+        recipes_carousel = recipes_all[0:3]
+        return render(request, "main.html", {'recipes_carousel': recipes_carousel})
+    def post(self, request):
+        query = request.POST.get('search')
+        recipes = Recipe.objects.search(query)
+        return render(request, "recipes_list.html", {'recipes': recipes})
+
+
+class RecipesListView(View):
+    def get(self, request):
+        recipes = Recipe.objects.all()
+        return render(request, "recipes_list.html", {'recipes': recipes})
+    def post(self, request):
+        query = request.POST.get('search')
+        recipes = Recipe.objects.search(query)
+        return render(request, "recipes_list.html", {'recipes': recipes})
+
 
 
 
