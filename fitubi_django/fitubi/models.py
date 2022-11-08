@@ -89,7 +89,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients')
     description = models.TextField()
     category = models.SmallIntegerField(choices=RECIPE_CATEGORY)
-    type = MultiSelectField(choices=DIET_TYPE, max_length=5)
+    type = MultiSelectField(choices=DIET_TYPE, max_choices=4, max_length=4)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -176,8 +176,8 @@ class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
     food_preference = MultiSelectField(choices=DIET_TYPE, max_length=5)
-    height = models.SmallIntegerField()
-    weight = models.SmallIntegerField()
+    height = models.SmallIntegerField(null=True)
+    weight = models.SmallIntegerField(null=True)
     sex = models.SmallIntegerField(choices=SEX)
     favourite_recipes = models.ManyToManyField(Recipe, through='UserRecipes')
     favourite_plans = models.ManyToManyField(Plan, through='UserPlans')
@@ -207,6 +207,14 @@ class UserPlans(models.Model):
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 
 
+class ArticleManager(models.Manager):
+    def search(self, query=None):
+        if query is None or query == "":
+            return self.get_queryset().none()
+        conditions = Q(title__icontains=query) | Q(content__icontains=query) | Q(author__icontains=query)
+        return self.get_queryset().filter(conditions)
+
+
 class Article(models.Model):
     title = models.CharField(max_length=128)
     author = models.CharField(max_length=64, null=True)
@@ -215,6 +223,8 @@ class Article(models.Model):
     slug = models.SlugField(max_length=64, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    objects = ArticleManager()
 
     def __str__(self):
         return self.title

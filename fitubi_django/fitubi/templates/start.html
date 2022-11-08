@@ -7,21 +7,22 @@
 
 </head>
 <body>
-    <section class="vh-100" style="background-color: #508bfc;">
+    <section class="vh-100" style="background-color:darkolivegreen">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card shadow-2-strong" style="border-radius: 1rem;">
               <div class="card-body p-5 text-center">
+                <h3>Welcome to FitUbi</h3>
                 <form method="post">
                     {% csrf_token %}
-                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color:darkolivegreen"
                   type="submit" name="new-account">Make account</button>
 
-                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color:darkolivegreen"
                   type="submit" name="login">Login</button>
 
-                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color: #3b5998;"
+                <button class="btn btn-lg btn-block btn-primary mb-2" style="background-color:darkolivegreen"
                   type="submit" name="guest" id="guest">Continue as guest</button>
                 </form>
               </div>

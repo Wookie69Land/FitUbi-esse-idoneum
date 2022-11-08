@@ -16,6 +16,7 @@ class UserForm(ModelForm):
 
 
 class FitUbiUserForm(ModelForm):
+    birth_date = forms.DateField(widget=forms.SelectDateWidget(years=range(1930, 2040)))
     class Meta:
         model = FitUbiUser
         fields = ['birth_date', 'food_preference', 'height', 'weight', 'sex']

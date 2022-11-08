@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from fitubi.views import StartPageView, LoginView, NewAccountView
+from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', StartPageView.as_view(), name='start-page'),
+    path('', StartPageView.as_view(), name='start'),
     path('login/', LoginView.as_view(), name='login'),
     path('new_account/', NewAccountView.as_view(), name='register'),
+    path('main/', MainPageView.as_view(), name='main'),
 ]

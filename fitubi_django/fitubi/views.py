@@ -12,7 +12,7 @@ class StartPageView(View):
         if "new-account" in request.POST:
             return redirect("register")
         elif "login" in request.POST:
-            return redirect('login')
+            return redirect("login")
         else:
             return render(request, "main.html")
 
@@ -25,6 +25,7 @@ class LoginView(View):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            login(request, user)
             return HttpResponse("login success")
         else:
             comment = "Your login or password are invalid. Try again."
@@ -33,9 +34,37 @@ class LoginView(View):
 
 class NewAccountView(View):
     def get(self, request):
-        form_user = UserForm(instance=request.user)
-        form_fitubi = FitUbiUserForm(instance=request.user.fitubiuser)
+        form_user = UserForm()
+        form_fitubi = FitUbiUserForm()
         return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi})
+    def post(self, request):
+        form_user = UserForm(request.POST)
+        form_fitubi = FitUbiUserForm(request.POST)
+        if form_user.is_valid() and form_fitubi.is_valid():
+            new_user = form_user.save()
+            new_user.refresh_from_db()
+            new_user.fitubiuser.birth_date = form_fitubi.cleaned_data.get('birth_date')
+            new_user.fitubiuser.food_preference = form_fitubi.cleaned_data.get('food_preference')
+            new_user.fitubiuser.height = form_fitubi.cleaned_data.get('height')
+            new_user.fitubiuser.weight = form_fitubi.cleaned_data.get('weight')
+            new_user.fitubiuser.sex = form_fitubi.cleaned_data.get('sex')
+            new_user.save()
+            username = form_user.cleaned_data.get('username')
+            password = form_user.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            comment = "Congratulations! Your can now use FitUbi."
+            return render(request, "register.html", {'comment': comment})
+        else:
+            form_user = UserForm()
+            form_fitubi = FitUbiUserForm()
+            comment = "Something went wrong. Please try again."
+            return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi, 'comment': comment})
+
+
+class MainPageView(View):
+    def get(self, request):
+        return render(request, "main.html")
 
 
 
