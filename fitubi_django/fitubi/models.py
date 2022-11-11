@@ -5,6 +5,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from multiselectfield import MultiSelectField
 
+from datetime import date
+
 
 UNIT = (
     (1, 'kilogram'),
@@ -172,6 +174,15 @@ SEX = (
 )
 
 
+ACTIVE_FACTOR = (
+    (1, "sedentary: little or no exercise, desk job"),
+    (2, "lightly active: exercise 1-3 times per week"),
+    (3, "moderately active: exercise 6-7 time per week"),
+    (4, "very active: hard exercise every day"),
+    (5, "extra active: training for marathon or triathlon")
+)
+
+
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
@@ -179,11 +190,17 @@ class FitUbiUser(models.Model):
     height = models.SmallIntegerField(null=True)
     weight = models.SmallIntegerField(null=True)
     sex = models.SmallIntegerField(choices=SEX)
+    activity = models.SmallIntegerField(choices=ACTIVE_FACTOR)
     favourite_recipes = models.ManyToManyField(Recipe, through='UserRecipes')
     favourite_plans = models.ManyToManyField(Plan, through='UserPlans')
 
     def __str__(self):
         return self.user.username
+
+    def get_age(self):
+        today = date.today()
+        age = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
+        return age
 
 
 @receiver(post_save, sender=User)

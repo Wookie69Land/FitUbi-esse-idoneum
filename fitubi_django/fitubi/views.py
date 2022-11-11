@@ -4,8 +4,9 @@ from django.views import View
 
 import random
 
-from .models import *
-from .forms import *
+from models import *
+from forms import *
+from fitubi_utils import *
 
 
 class StartPageView(View):
