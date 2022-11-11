@@ -14,7 +14,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav">
                 <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="">Recipes</a>
+                  <a class="nav-link active" aria-current="page" href="{% url 'recipes_list' %}">Recipes</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link active" aria-current="page" href="">Utilities</a>
@@ -35,22 +35,26 @@
             </div>
           </div>
     </nav><br>
-    {% if recipes_carousel %}
+    <h6>User: {{ request.user }}, is authenticated: {{ request.user.is_authenticated }}</h6>
+
+
+   {% if recipes_carousel %}
+    <hr>
     <div class="position-relative">
-    <h3>Our sample recipes:</h3>
+    <h3>Our sample recipes:</h3><hr>
     <ul>
         <li>
           <h3>{{ recipes_carousel.0.name }}</h3>
           <p>{{ recipes_carousel.0.description }}</p>
-        </li>
+        </li><hr>
         <li>
           <h3>{{ recipes_carousel.1.name }}</h3>
           <p>{{ recipes_carousel.1.description }}</p>
-        </li>
+        </li><hr>
         <li>
           <h3>{{ recipes_carousel.2.name }}</h3>
           <p>{{ recipes_carousel.2.description }}</p>
-        </li>
+        </li><hr>
 
     </ul>
     </div>

@@ -4,7 +4,7 @@ from django.views import View
 
 import random
 
-from .models import User
+from .models import *
 from .forms import *
 
 
@@ -80,10 +80,12 @@ class MainPageView(View):
 class RecipesListView(View):
     def get(self, request):
         recipes = Recipe.objects.all()
-        return render(request, "recipes_list.html", {'recipes': recipes})
+        form = RecipeForm()
+        return render(request, "recipes_list.html", {'recipes': recipes, 'form': form})
     def post(self, request):
         query = request.POST.get('search')
-        recipes = Recipe.objects.search(query)
+        if query:
+            recipes = Recipe.objects.search(query)
         return render(request, "recipes_list.html", {'recipes': recipes})
 
 

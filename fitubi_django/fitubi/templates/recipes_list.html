@@ -1,6 +1,33 @@
 {% extends "main.html" %}
 
 {% block content %}
+    <form method="post">
+    {% csrf_token %}
+
+        <table class="table borderless">
+            <tbody>
+            <tr class="d-flex">
+                <th scope="row" class="col-2">Keyword:</th>
+                <td class="col-7">
+                    <input class="w-100 p-1" value="" name="name">
+                </td>
+            </tr>
+            <tr class="d-flex">
+                <th scope="row" class="col-2">Opis przepisu</th>
+                <td class="col-7"><textarea class="w-100 p-1"
+                                            rows="5" name="description"></textarea></td>
+            </tr>
+            <tr class="d-flex">
+                <th scope="row" class="col-3">Przygotowanie(minuty)</th>
+                <td class="col-3">
+                    <input class="p-1" type="number" value="" name="time">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    <input type="submit" value="search">
+    </form>
 
 <ol class="list-group list-group-numbered">
     {% for recipe in recipes %}
@@ -12,6 +39,8 @@
     <a href=""><span class="badge bg-primary rounded-pill">
         Details </span></a>
   </li>
+        {% empty %}
+        <h3>No recipe was found with this search conditions.</h3>
     {% endfor %}
 </ol>
 
