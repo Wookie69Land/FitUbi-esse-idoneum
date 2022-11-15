@@ -4,9 +4,9 @@ from django.views import View
 
 import random
 
-from models import *
-from forms import *
-from fitubi_utils import *
+from fitubi.models import *
+from fitubi.forms import *
+from fitubi.fitubi_utils import *
 
 
 class StartPageView(View):
@@ -30,7 +30,7 @@ class LoginView(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse("login success")
+            return redirect('main')
         else:
             comment = "Your login or password are invalid. Try again."
             return render(request, "login.html", {'comment': comment})
@@ -45,20 +45,23 @@ class NewAccountView(View):
         form_user = UserForm(request.POST)
         form_fitubi = FitUbiUserForm(request.POST)
         if form_user.is_valid() and form_fitubi.is_valid():
-            new_user = form_user.save()
-            new_user.refresh_from_db()
+            username = form_user.cleaned_data.get('username')
+            password = form_user.cleaned_data.get('password')
+            email = form_user.cleaned_data.get('student')
+            new_user = User.objects.create_user(username=username, password=password, email=email)
+
             new_user.fitubiuser.birth_date = form_fitubi.cleaned_data.get('birth_date')
             new_user.fitubiuser.food_preference = form_fitubi.cleaned_data.get('food_preference')
             new_user.fitubiuser.height = form_fitubi.cleaned_data.get('height')
             new_user.fitubiuser.weight = form_fitubi.cleaned_data.get('weight')
             new_user.fitubiuser.sex = form_fitubi.cleaned_data.get('sex')
+            new_user.fitubiuser.activity = form_fitubi.cleaned_data.get('activity')
             new_user.save()
-            username = form_user.cleaned_data.get('username')
-            password = form_user.cleaned_data.get('password')
+
             user = authenticate(username=username, password=password)
             login(request, user)
             comment = "Congratulations! Your can now use FitUbi."
-            return render(request, "register.html", {'comment': comment})
+            return render(request, "main.html", {'comment': comment})
         else:
             form_user = UserForm()
             form_fitubi = FitUbiUserForm()

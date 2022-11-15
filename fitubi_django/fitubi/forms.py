@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import User, FitUbiUser, Ingredient, Recipe, Article, Plan, RecipePlan
+from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, Article, Plan, RecipePlan
 
 
 class LoginForm(ModelForm):
@@ -9,7 +9,13 @@ class LoginForm(ModelForm):
         fields = ['username', 'password']
 
 
+class LoginForm2(forms.Form):
+    login = forms.CharField(max_length=64)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+
 class UserForm(ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
     class Meta:
         model = User
         fields = ['username', 'password', 'email']
@@ -17,6 +23,7 @@ class UserForm(ModelForm):
 
 class FitUbiUserForm(ModelForm):
     birth_date = forms.DateField(widget=forms.SelectDateWidget(years=range(1930, 2040)))
+    food_preference = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=DIET_TYPE)
     class Meta:
         model = FitUbiUser
         fields = ['birth_date', 'food_preference', 'height', 'weight', 'sex', 'activity']

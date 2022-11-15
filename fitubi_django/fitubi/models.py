@@ -110,6 +110,9 @@ class RecipeIngredients(models.Model):
     amount = models.IntegerField()
     #unit = models.SmallIntegerField(choices=UNIT)
 
+    def __str__(self):
+        return f'{self.recipe}: {self.ingredient}'
+
 
 class PlanManager(models.Manager):
     def search(self, query=None):
@@ -129,7 +132,7 @@ class Plan(models.Model):
     objects = PlanManager()
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     def get_absolute_url(self):
         return f'/plans/{self.id}/'
@@ -170,7 +173,6 @@ class RecipePlan(models.Model):
 SEX = (
     (1, 'man'),
     (2, 'woman'),
-    (3, 'other'),
 )
 
 
@@ -186,11 +188,11 @@ ACTIVE_FACTOR = (
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
-    food_preference = MultiSelectField(choices=DIET_TYPE, max_length=5)
+    food_preference = MultiSelectField(choices=DIET_TYPE, max_length=6, null=True)
     height = models.SmallIntegerField(null=True)
     weight = models.SmallIntegerField(null=True)
-    sex = models.SmallIntegerField(choices=SEX)
-    activity = models.SmallIntegerField(choices=ACTIVE_FACTOR)
+    sex = models.SmallIntegerField(choices=SEX, null=True)
+    activity = models.SmallIntegerField(choices=ACTIVE_FACTOR, null=True)
     favourite_recipes = models.ManyToManyField(Recipe, through='UserRecipes')
     favourite_plans = models.ManyToManyField(Plan, through='UserPlans')
 
@@ -207,11 +209,8 @@ class FitUbiUser(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         FitUbiUser.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
     instance.fitubiuser.save()
+
 
 
 class UserRecipes(models.Model):

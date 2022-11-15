@@ -19,8 +19,8 @@ def create_users():
         username, first_name, last_name = create_name()
         fake = Factory.create("en")
         email = fake.email()
-        password = "fake"
-        person = User.objects.create(username=username,
+        password = "fakefake"
+        person = User.objects.create_user(username=username,
                                     first_name=first_name,
                                     last_name=last_name,
                                     email=email,
@@ -30,6 +30,7 @@ def create_users():
         person.fitubiuser.height = random.randint(150, 220)
         person.fitubiuser.weight = random.randint(40, 150)
         person.fitubiuser.sex = random.choice(SEX)[0]
+        person.fitubiuser.activity = random.choice(ACTIVE_FACTOR)[0]
 
 
 def create_ingredients():

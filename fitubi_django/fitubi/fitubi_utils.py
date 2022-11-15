@@ -1,4 +1,4 @@
-from models import RecipeIngredients
+from fitubi.models import RecipeIngredients
 
 
 def kilo_to_pound(amount):

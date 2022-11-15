@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ._private import create_recipe
+from ._private import create_recipe, create_ingredients_for_recipe
 
 
 class Command(BaseCommand):
