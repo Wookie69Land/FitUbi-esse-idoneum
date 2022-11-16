@@ -1,0 +1,51 @@
+{% extends "main.html" %}
+
+{% block content %}
+    {% if comment %}<p style="color: darkred">{{ comment }}</p>{% endif %}
+    <table class="table borderless">
+        <tbody>
+            <tr>
+                <th scope="row" class="col-2">Name:</th>
+                <th scope="row" class="col-2">Ingredients:</th>
+                <th scope="row" class="col-2">Description:</th>
+                <th scope="row" class="col-2">Category:</th>
+                <th scope="row" class="col-2">Type:</th>
+                <th scope="row" class="col-2">Created and updated:</th>
+            </tr>
+            <tr>
+                <td>
+                    {{ recipe }}
+                </td>
+                <td>
+                    {% for ingredient in recipe.ingredients.all %}
+                    {{ ingredient|lower }}<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ recipe.description }}
+                </td>
+                <td>
+                    {{ recipe.get_category_display }}
+                </td>
+                <td>
+                    {{ recipe.get_type_display }}
+                </td>
+                <td>
+                    {{ recipe.created }}, {{ recipe.updated }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if user.is_authenticated %}
+    <a href="/modify_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Modify </span></a>
+    <a href="/delete_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Delete </span></a>
+    <a href="/add_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Add to favourites </span></a>
+    <a href="/new_modified_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Create new recipe based on this one </span></a>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    {% if comment %}<p>{{ comment }}</p>{% endif %}
+
+    <form method="post">
+       {% csrf_token %}
+       <h3 class="mb-5">Recipe:</h3>
+
+            <div class="form-outline mb-4">
+              {{ form.as_p }}
+              Ingredients:<br>
+                {% for ingredient in recipe.ingredients.all %}
+                {{ ingredient }}<br>
+                {% endfor %}
+              <a href="/modify_ingredients/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+                Modify ingredients </span></a>
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Modify recipe</button>
+
+     </form>
+
+{% endblock %}

@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView, RecipesListView
+from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView, \
+    RecipesListView, LogoutView, RecipeDetailsView, ModifyRecipeView, \
+    AddIngredientsToRecipe
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,8 @@ urlpatterns = [
     path('new_account/', NewAccountView.as_view(), name='register'),
     path('main/', MainPageView.as_view(), name='main'),
     path('recipes/', RecipesListView.as_view(), name='recipes_list'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('recipe/<int:id>/', RecipeDetailsView.as_view(), name='recipe_details'),
+    path('modify_recipe/<int:id>/', ModifyRecipeView.as_view(), name='modify_recipe'),
+    path('modify_ingredients/<int:id>', AddIngredientsToRecipe.as_view(), name='recipe-ingredients'),
 ]

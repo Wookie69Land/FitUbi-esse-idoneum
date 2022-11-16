@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, Article, Plan, RecipePlan
+from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
 
 
 class LoginForm(ModelForm):
@@ -36,10 +36,27 @@ class IngredientForm(ModelForm):
 
 
 class RecipeForm(ModelForm):
-    ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all())
+    type = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=DIET_TYPE)
     class Meta:
         model = Recipe
-        fields = ["name", 'ingredients', 'description', 'category', 'type']
+        fields = ["name", 'description', 'category', 'type']
+
+
+class RecipeIngredientsForm(ModelForm):
+    class Meta:
+        model = RecipeIngredients
+        fields = ['ingredient', 'amount']
+
+
+class RecipeSearchForm(ModelForm):
+    class Meta:
+        model = Recipe
+        fields = ['category', 'type']
+
+    def __init__(self, *args, **kwargs):
+        super(RecipeSearchForm, self).__init__(*args, **kwargs)
+        self.fields['category'].required = False
+        self.fields['type'].required = False
 
 
 class PlanForm(ModelForm):

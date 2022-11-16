@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.views import View
 
 import random
@@ -81,17 +81,82 @@ class MainPageView(View):
         return render(request, "recipes_list.html", {'recipes': recipes})
 
 
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('start')
+
+
 class RecipesListView(View):
     def get(self, request):
-        recipes = Recipe.objects.all()
-        form = RecipeForm()
-        return render(request, "recipes_list.html", {'recipes': recipes, 'form': form})
+        recipes = Recipe.objects.all().order_by('-updated')
+        form = RecipeSearchForm()
+        return render(request, "recipes_list.html", {'recipes': recipes,
+                                                     'form': form})
     def post(self, request):
         query = request.POST.get('search')
         if query:
             recipes = Recipe.objects.search(query)
-        return render(request, "recipes_list.html", {'recipes': recipes})
+        else:
+            recipes = Recipe.objects.all()
+        form = RecipeSearchForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data.get('category'):
+                category = form.cleaned_data.get('category')
+                recipes = recipes.filter(category=category)
+            if form.cleaned_data.get('type'):
+                type = form.cleaned_data.get('type')
+                recipes = recipes.filter(type=type)
+        form = RecipeSearchForm()
+        return render(request, "recipes_list.html", {'recipes': recipes,
+                                                     'form': form})
 
 
+class RecipeDetailsView(View):
+    def get(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        return render(request, "recipe_details.html", {'recipe': recipe})
+
+
+class ModifyRecipeView(View):
+    def get(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        user = request.user
+        if recipe.created_by == user:
+            form = RecipeForm(instance=recipe)
+            return render(request, "recipe_form.html", {'recipe': recipe,
+                                                        'form': form})
+        comment = "You can modify only recipes created by yourself."
+        return render(request, "recipe_details.html", {'recipe': recipe, 'comment': comment})
+    def post(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        form = RecipeForm(request.POST, instance=recipe)
+
+        if form.is_valid():
+            form.save()
+
+            if UserRecipes.objects.filter(user=user, recipe=recipe, operation=2).exists():
+                user_recipes = UserRecipes.objects.filter(user=user, recipe=recipe, operation=2)
+                user_recipes_update = user_recipes.last()
+                user_recipes_update.save()
+            else:
+                UserRecipes.objects.create(user=user, recipe=recipe, operation=2)
+
+            recipe.refresh_from_db()
+            return render(request, "recipe_details.html", {'recipe': recipe})
+
+        form = RecipeForm(instance=recipe)
+        return render(request, "recipe_form.html", {'recipe': recipe,
+                                                    'form': form})
+
+class AddIngredientsToRecipe(View):
+    def get(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+        form = RecipeIngredientsForm(instance=recipe)
+        return render(request, "recipe_ingredients_form.html", {'recipe': recipe,
+                                                                'recipe_ingredients': recipe_ingredients,
+                                                                'form': form})
 
 

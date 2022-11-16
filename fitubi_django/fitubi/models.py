@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from multiselectfield import MultiSelectField
 
+from multiselectfield import MultiSelectField
 from datetime import date
 
 
@@ -94,6 +94,7 @@ class Recipe(models.Model):
     type = MultiSelectField(choices=DIET_TYPE, max_choices=4, max_length=4)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    created_by = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
     objects = RecipeManager()
 
@@ -101,14 +102,13 @@ class Recipe(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return f'/articles/{self.id}/'
+        return f'/recipe/{self.id}/'
 
 
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.IntegerField()
-    #unit = models.SmallIntegerField(choices=UNIT)
 
     def __str__(self):
         return f'{self.recipe}: {self.ingredient}'
@@ -212,15 +212,28 @@ def create_user_profile(sender, instance, created, **kwargs):
     instance.fitubiuser.save()
 
 
+OPERATIONS = (
+    (1, 'add to favourites'),
+    (2, 'modify'),
+    (3, 'delete'),
+    (4, 'create')
+)
+
 
 class UserRecipes(models.Model):
     user = models.ForeignKey(FitUbiUser, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    operation = models.SmallIntegerField(choices=OPERATIONS)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class UserPlans(models.Model):
     user = models.ForeignKey(FitUbiUser, on_delete=models.CASCADE)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+    operation = models.SmallIntegerField(choices=OPERATIONS)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class ArticleManager(models.Manager):
