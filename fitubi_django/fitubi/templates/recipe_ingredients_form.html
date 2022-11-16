@@ -8,8 +8,18 @@
        {% csrf_token %}
        <h3 class="mb-5">Recipe: {{ recipe }}</h3>
 
-            <div class="form-outline mb-4">
-              {{ form.as_p }}
+            {% for ingredient in ingredients %}
+                <div>
+                    <input type="checkbox" name="ingredients"
+                           value="{{ ingredient }}" id="{{ ingredient }}"
+                    {% if ingredient in recipe.ingredients.all %} checked {% endif %}>
+                    <label for="{{ ingredient }}">{{ ingredient }}</label>
+                    <input type="text" name="amount_{{ ingredient.id }}">
+                    <label for="amount_{{ ingredient.id }}">amount in {{ ingredient.get_unit_display }}</label>
+                    <a href="/new_modified_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+                        Convert </span></a>
+                </div>
+            {% endfor %}
 
             </div>
             <button class="btn btn-primary btn-lg btn-block" type="submit">Modify ingredients</button>

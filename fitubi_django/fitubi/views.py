@@ -153,10 +153,13 @@ class ModifyRecipeView(View):
 class AddIngredientsToRecipe(View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
-        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
-        form = RecipeIngredientsForm(instance=recipe)
+        ingredients = Ingredient.objects.all()
         return render(request, "recipe_ingredients_form.html", {'recipe': recipe,
-                                                                'recipe_ingredients': recipe_ingredients,
-                                                                'form': form})
+                                                                'ingredients': ingredients})
+
+    def post(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        ingredients = request.POST.getlist('ingredients')
+        return render(request, "recipe_details.html", {'recipe': recipe})
 
 
