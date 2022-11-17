@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    {% if comment %}<p style="color: darkred">{{ comment }}</p>{% endif %}
+
+    <form method="post">
+       {% csrf_token %}
+       <h3 class="mb-5">Modify {{ recipe }} ingredients:</h3>
+        <table class="table borderless">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="col-2">Add ingredients:</th>
+                        <th scope="row" class="col-2">Remove ingredients or modify amount:</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {{ form.as_p }}
+                            <button class="btn btn-block" style="background-color: cornflowerblue"
+                                    type="submit" name="add">
+                                Add</button>
+
+                            <button class="btn btn-block" style="background-color: cornflowerblue"
+                                    type="submit" name="convert">
+                                Convert </button>
+                        </td>
+                        <td>
+                            {% for row in ingredients %}
+                                <input type="number" step="0.01" value="{{ row.amount }}" name="{{ row.id }}">
+                            <a href="/remove_ingredient/{{ row.ingredient.id }}/recipe/{{ row.recipe.id }}">
+                                 {{ row.ingredient|lower }}</a>
+                                <br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
+            <button class="btn btn-primary btn-lg btn-block" type="submit" name="finish">Finish</button>
+
+     </form>
+
+{% endblock %}

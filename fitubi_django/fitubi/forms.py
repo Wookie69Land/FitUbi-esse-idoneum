@@ -46,6 +46,10 @@ class RecipeIngredientsForm(ModelForm):
     class Meta:
         model = RecipeIngredients
         fields = ['ingredient', 'amount']
+    def __init__(self, *args, **kwargs):
+        super(RecipeIngredientsForm, self).__init__(*args, **kwargs)
+        self.fields['ingredient'].required = False
+        self.fields['amount'].required = False
 
 
 class RecipeSearchForm(ModelForm):

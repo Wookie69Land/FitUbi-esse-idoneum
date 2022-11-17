@@ -11,8 +11,8 @@
             <div class="form-outline mb-4">
               {{ form.as_p }}
               Ingredients:<br>
-                {% for ingredient in recipe.ingredients.all %}
-                {{ ingredient }}<br>
+                {% for row in recipe_ingredients %}
+                {{ row.amount }} {{ row.ingredient|lower }}<br>
                 {% endfor %}
               <a href="/modify_ingredients/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
                 Modify ingredients </span></a>

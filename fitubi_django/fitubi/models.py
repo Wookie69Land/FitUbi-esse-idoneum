@@ -39,7 +39,6 @@ FOODCAT = (
 class Ingredient(models.Model):
     name = models.CharField(max_length=128, unique=True)
     unit = models.SmallIntegerField(choices=UNIT)
-    #unit2 = models.SmallIntegerField(choices=UNIT)
     carbs = models.IntegerField()
     fats = models.IntegerField()
     proteins = models.IntegerField()
@@ -49,7 +48,7 @@ class Ingredient(models.Model):
     dangers = models.TextField(null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} in {self.get_unit_display()}'
 
 
 RECIPE_CATEGORY = (
@@ -108,7 +107,7 @@ class Recipe(models.Model):
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    amount = models.FloatField()
 
     def __str__(self):
         return f'{self.recipe}: {self.ingredient}'

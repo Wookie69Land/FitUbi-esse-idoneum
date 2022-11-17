@@ -122,10 +122,12 @@ class ModifyRecipeView(View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
         user = request.user
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         if recipe.created_by == user:
             form = RecipeForm(instance=recipe)
             return render(request, "recipe_form.html", {'recipe': recipe,
-                                                        'form': form})
+                                                        'form': form,
+                                                        'recipe_ingredients': recipe_ingredients})
         comment = "You can modify only recipes created by yourself."
         return render(request, "recipe_details.html", {'recipe': recipe, 'comment': comment})
     def post(self, request, id):
@@ -147,19 +149,74 @@ class ModifyRecipeView(View):
             return render(request, "recipe_details.html", {'recipe': recipe})
 
         form = RecipeForm(instance=recipe)
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         return render(request, "recipe_form.html", {'recipe': recipe,
-                                                    'form': form})
+                                                    'form': form,
+                                                    'recipe_ingredients': recipe_ingredients})
 
-class AddIngredientsToRecipe(View):
+
+class ModifyIngredientsToRecipe(View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
-        ingredients = Ingredient.objects.all()
-        return render(request, "recipe_ingredients_form.html", {'recipe': recipe,
-                                                                'ingredients': ingredients})
+        ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+        form = RecipeIngredientsForm()
+        return render(request, "recipe_ingredients_form2.html", {'recipe': recipe,
+                                                                 'ingredients': ingredients,
+                                                                 'form': form})
 
     def post(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
-        ingredients = request.POST.getlist('ingredients')
-        return render(request, "recipe_details.html", {'recipe': recipe})
+        if 'add' in request.POST:
+            form = RecipeIngredientsForm(request.POST)
+            if form.is_valid():
+                ingredient = form.cleaned_data.get('ingredient')
+                amount = form.cleaned_data.get('amount')
+                if RecipeIngredients.objects.filter(recipe=recipe, ingredient=ingredient).exists():
+                    comment = f'Ingredient already exists in {recipe}.'
+                    recipe.refresh_from_db()
+                    ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+                    form = RecipeIngredientsForm()
+                    return render(request, "recipe_ingredients_form2.html", {'recipe': recipe,
+                                                                             'ingredients': ingredients,
+                                                                             'form': form,
+                                                                             'comment': comment})
+                RecipeIngredients.objects.create(recipe=recipe,
+                                                 ingredient=ingredient,
+                                                 amount=amount)
+                recipe.refresh_from_db()
+                ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+                form = RecipeIngredientsForm()
+                return render(request, "recipe_ingredients_form2.html", {'recipe': recipe,
+                                                                         'ingredients': ingredients,
+                                                                         'form': form})
+            else:
+                comment = 'Submit correct data'
+                recipe.refresh_from_db()
+                ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+                form = RecipeIngredientsForm()
+                return render(request, "recipe_ingredients_form2.html", {'recipe': recipe,
+                                                                         'ingredients': ingredients,
+                                                                         'form': form,
+                                                                         'comment': comment})
+        if 'convert' in request.POST:
+            pass
+        if 'finish' in request.POST:
+            ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+            for row in ingredients:
+                row.amount = request.POST.get(str(row.id))
+                row.save()
+            recipe.refresh_from_db()
+            return render(request, "recipe_details.html", {'recipe': recipe})
 
+
+class RemoveIngredientRecipeView(View):
+    def get(self, request, ing_id, rec_id):
+        ingredient = get_object_or_404(Ingredient, pk=ing_id)
+        recipe = get_object_or_404(Recipe, pk=rec_id)
+        recipe.ingredients.remove(ingredient)
+        return redirect('recipe_ingredients', id=rec_id)
+
+
+class DeleteRecipeView(View):
+    def get(self, request, id):
 

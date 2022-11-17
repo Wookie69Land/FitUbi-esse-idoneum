@@ -18,7 +18,7 @@
                 </td>
                 <td>
                     {% for ingredient in recipe.ingredients.all %}
-                    {{ ingredient|lower }}<br>
+                    {{ ingredient.name|lower }}<br>
                     {% endfor %}
                 </td>
                 <td>
