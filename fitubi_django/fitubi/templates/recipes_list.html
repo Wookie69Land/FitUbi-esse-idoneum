@@ -3,7 +3,7 @@
 {% block content %}
 
     <a href="/new_recipe/"><span class="badge bg-primary rounded-pill">
-        Create new recipe </span></a
+        Create new recipe </span></a>
 
     <form method="post">
     {% csrf_token %}
@@ -13,14 +13,17 @@
             <tr>
                 <th scope="row" class="col-2">Keyword:</th>
                 <td class="col-7">
-                    <input class="w-100 p-1" value="" name="search">
+                    <input class="w-100 p-1" name="search">
                 </td>
-            {{ form.as_table }}</tr>
-
+            </tr>
+                {{ form.as_table }}
+            <tr>
+            </tr>
             </tbody>
         </table>
-
-    <input type="submit" value="search">
+        <button class="btn btn-primary btn-lg btn-block"
+                type="submit">
+                search</button>
     </form>
 
 <ol class="list-group list-group-numbered">

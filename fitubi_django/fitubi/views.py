@@ -214,8 +214,8 @@ class ModifyIngredientsToRecipe(View):
             for row in ingredients:
                 row.amount = request.POST.get(str(row.id))
                 row.save()
-            recipe.refresh_from_db()
-            return render(request, "recipe_details.html", {'recipe': recipe})
+            url = f'/recipe/{recipe.id}'
+            return redirect(url)
 
 
 class RemoveIngredientRecipeView(View):

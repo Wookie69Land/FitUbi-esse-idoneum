@@ -41,7 +41,7 @@ def fahrenheit_to_celsius(amount):
     return amount_c
 
 
-macros = {
+macros_gen = {
     'carbs': 0,
     'fats': 0,
     'proteins': 0,
@@ -50,6 +50,12 @@ macros = {
 
 
 def macros_total(recipe):
+    macros = {
+        'carbs': 0,
+        'fats': 0,
+        'proteins': 0,
+        'calories': 0
+    }
     ingredients = RecipeIngredients.objects.filter(recipe=recipe)
     for row in ingredients:
         macros['carbs'] += row.ingredient.carbs * row.amount
