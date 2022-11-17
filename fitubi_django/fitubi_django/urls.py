@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView, \
     RecipesListView, LogoutView, RecipeDetailsView, ModifyRecipeView, \
-    ModifyIngredientsToRecipe, RemoveIngredientRecipeView
+    ModifyIngredientsToRecipe, RemoveIngredientRecipeView, DeleteRecipeView, \
+    AddRecipeToFavouritesView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,4 +33,6 @@ urlpatterns = [
     path('modify_ingredients/<int:id>', ModifyIngredientsToRecipe.as_view(), name='recipe_ingredients'),
     path('remove_ingredient/<int:ing_id>/recipe/<int:rec_id>', RemoveIngredientRecipeView.as_view(),
          name='remove_ingredient_recipe'),
+    path('delete_recipe/<int:id>', DeleteRecipeView.as_view(), name='delete_recipe'),
+    path('add_recipe/<int:id>', AddRecipeToFavouritesView.as_view(), name='add_recipe'),
 ]

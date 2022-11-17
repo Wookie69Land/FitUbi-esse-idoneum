@@ -15,6 +15,9 @@
             <tr>
                 <td>
                     {{ recipe }}
+                    {% if favourite_mark %}<span style="color: greenyellow"
+                                                 class="badge bg-primary rounded-pill">
+                    favourite </span>{% endif %}
                 </td>
                 <td>
                     {% for ingredient in recipe.ingredients.all %}
