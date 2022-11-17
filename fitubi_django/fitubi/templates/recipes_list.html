@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <a href="/new_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/new_recipe/"><span class="badge bg-primary rounded-pill">
         Create new recipe </span></a
 
     <form method="post">
@@ -10,13 +10,13 @@
 
         <table class="table borderless">
             <tbody>
-            <tr class="d-flex">
+            <tr>
                 <th scope="row" class="col-2">Keyword:</th>
                 <td class="col-7">
                     <input class="w-100 p-1" value="" name="search">
                 </td>
-            </tr>
-            {{ form.as_table }}
+            {{ form.as_table }}</tr>
+
             </tbody>
         </table>
 

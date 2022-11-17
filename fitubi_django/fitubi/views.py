@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
+from django.forms.models import model_to_dict
 
 import random
 
@@ -247,6 +248,45 @@ class AddRecipeToFavouritesView(View):
         comment = 'success'
         return render(request, "recipe_details.html", {'comment': comment})
         #return redirect('user_profile')
+
+
+class CreateModifiedRecipeView(View):
+    def get(self, request, id):
+        recipe = get_object_or_404(Recipe, pk=id)
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+        form = RecipeForm(initial=model_to_dict(recipe, exclude=['id']))
+        return render(request, "new_recipe_form.html", {'recipe': recipe,
+                                                        'form': form,
+                                                        'recipe_ingredients': recipe_ingredients})
+    def post(self, request, id):
+        form = RecipeForm(request.POST)
+
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            description = form.cleaned_data.get('description')
+            category = form.cleaned_data.get('category')
+            type = form.cleaned_data.get('type')
+            recipe = Recipe.objects.create(name=name, description=description,
+                                           category=category, type=type, created_by=request.user)
+            recipe.refresh_from_db()
+
+            user = get_object_or_404(FitUbiUser, user=request.user)
+            UserRecipes.objects.create(user=user, recipe=recipe, operation=4)
+
+            url = f'/modify_ingredients/{recipe.id}'
+            return redirect(url)
+
+        recipe = get_object_or_404(Recipe, pk=id)
+        form = RecipeForm(instance=recipe)
+        form_int = RecipeIngredientsForm()
+        recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+        comment = 'Submit correct data. Remember that name must be unique.'
+        return render(request, "new_recipe_form.html", {'recipe': recipe,
+                                                        'form': form,
+                                                        'form_int': form_int,
+                                                        'recipe_ingredients': recipe_ingredients,
+                                                        'comment': comment})
+
 
 
 

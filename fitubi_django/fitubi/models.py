@@ -93,7 +93,7 @@ class Recipe(models.Model):
     type = MultiSelectField(choices=DIET_TYPE, max_choices=4, max_length=4)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    created_by = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     objects = RecipeManager()
 
