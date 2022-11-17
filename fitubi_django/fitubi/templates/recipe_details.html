@@ -5,12 +5,12 @@
     <table class="table borderless">
         <tbody>
             <tr>
-                <th scope="row" class="col-2">Name:</th>
-                <th scope="row" class="col-2">Ingredients:</th>
-                <th scope="row" class="col-2">Description:</th>
-                <th scope="row" class="col-2">Category:</th>
-                <th scope="row" class="col-2">Type:</th>
-                <th scope="row" class="col-2">Created and updated:</th>
+                <th scope="row" class="col-2">Name</th>
+                <th scope="row" class="col-2">Ingredients</th>
+                <th scope="row" class="col-2">Description</th>
+                <th scope="row" class="col-2">Category</th>
+                <th scope="row" class="col-2">Type</th>
+                <th scope="row" class="col-2">Created and updated</th>
             </tr>
             <tr>
                 <td>
@@ -35,6 +35,32 @@
                 </td>
                 <td>
                     {{ recipe.created }}, {{ recipe.updated }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <strong>Macros:</strong>
+    <table class="table borderless">
+        <tbody>
+            <tr>
+                <th scope="row" class="col-2">Carbs</th>
+                <th scope="row" class="col-2">Fats</th>
+                <th scope="row" class="col-2">Proteins</th>
+                <th scope="row" class="col-2"
+                    style="color: darkolivegreen">Calories</th>
+            </tr>
+            <tr>
+                <td>
+                    {{ macros.carbs }}
+                </td>
+                <td>
+                    {{ macros.fats }}
+                </td>
+                <td>
+                    {{ macros.proteins }}
+                </td>
+                <td>
+                    {{ macros.calories}}
                 </td>
             </tr>
         </tbody>

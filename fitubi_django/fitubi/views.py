@@ -117,12 +117,14 @@ class RecipeDetailsView(View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
         user = get_object_or_404(FitUbiUser, user=request.user)
+        macros = macros_total(recipe)
         if UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).exists():
             favourite_mark = True
         else:
             favourite_mark = False
         return render(request, "recipe_details.html", {'recipe': recipe,
-                                                       'favourite_mark': favourite_mark})
+                                                       'favourite_mark': favourite_mark,
+                                                       'macros': macros})
 
 
 class ModifyRecipeView(View):
