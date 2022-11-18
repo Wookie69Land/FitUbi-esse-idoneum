@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
+from fitubi.fitubi_utils import CONV_OPTIONS
 
 
 class LoginForm(ModelForm):
@@ -80,3 +81,8 @@ class ArticleForm(ModelForm):
     class Meta:
         model = Article
         fields = ['title', 'author', 'content', 'reference']
+
+
+class ConverterForm(forms.Form):
+    converter = forms.ChoiceField(choices=CONV_OPTIONS)
+    quantity = forms.DecimalField(max_digits=10, decimal_places=2, step_size=0.1)

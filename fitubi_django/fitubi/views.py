@@ -359,5 +359,27 @@ class CreateRecipeView(View):
                                                         'comment': comment})
 
 
+class UtilitiesView(View):
+    def get(self, request):
+        clean_comment(request)
+        form = ConverterForm()
+        return render(request, 'utilities.html', {'form': form})
+    def post(self, request):
+        form = ConverterForm(request.POST)
+        if form.is_valid():
+            converter = int(form.cleaned_data.get('converter'))
+            quantity = float(form.cleaned_data.get('quantity'))
+            result = convert_form(converter, quantity)
+            if 'convert' in request.POST:
+                initial = {'converter': converter, 'quantity': quantity}
+                form = ConverterForm(initial=initial)
+                return render(request, 'utilities.html', {'result': result,
+                                                          'form': form})
+            if 'convert_save' in request.POST:
+                request.session['result'] = result
+                request.session['converter'] = converter
+                return redirect('recipes_list')
+            if 'submit' in request.POST:
+                return redirect('main')
 
 
