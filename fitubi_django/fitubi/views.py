@@ -90,6 +90,7 @@ class LogoutView(View):
 
 class RecipesListView(View):
     def get(self, request):
+        del request.session['message']
         recipes = Recipe.objects.all().order_by('-updated')
         form = RecipeSearchForm()
         return render(request, "recipes_list.html", {'recipes': recipes,
@@ -122,6 +123,12 @@ class RecipeDetailsView(View):
             favourite_mark = True
         else:
             favourite_mark = False
+        if request.session.has_key('comment'):
+            comment = request.session['comment']
+            return render(request, "recipe_details.html", {'recipe': recipe,
+                                                           'favourite_mark': favourite_mark,
+                                                           'macros': macros,
+                                                           'comment': comment})
         return render(request, "recipe_details.html", {'recipe': recipe,
                                                        'favourite_mark': favourite_mark,
                                                        'macros': macros})
@@ -129,6 +136,7 @@ class RecipeDetailsView(View):
 
 class ModifyRecipeView(View):
     def get(self, request, id):
+        del request.session['message']
         recipe = get_object_or_404(Recipe, pk=id)
         user = request.user
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
@@ -138,7 +146,9 @@ class ModifyRecipeView(View):
                                                         'form': form,
                                                         'recipe_ingredients': recipe_ingredients})
         comment = "You can modify only recipes created by yourself."
-        return render(request, "recipe_details.html", {'recipe': recipe, 'comment': comment})
+        request.session['comment'] = comment
+        url = f'/recipe/{recipe.id}'
+        return redirect(url)
     def post(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
         user = get_object_or_404(FitUbiUser, user=request.user)
@@ -154,8 +164,8 @@ class ModifyRecipeView(View):
             else:
                 UserRecipes.objects.create(user=user, recipe=recipe, operation=2)
 
-            recipe.refresh_from_db()
-            return render(request, "recipe_details.html", {'recipe': recipe})
+            url = f'/recipe/{recipe.id}'
+            return redirect(url)
 
         form = RecipeForm(instance=recipe)
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
@@ -166,6 +176,7 @@ class ModifyRecipeView(View):
 
 class ModifyIngredientsToRecipe(View):
     def get(self, request, id):
+        del request.session['message']
         recipe = get_object_or_404(Recipe, pk=id)
         ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         form = RecipeIngredientsForm()
@@ -235,12 +246,14 @@ class DeleteRecipeView(View):
             return redirect('recipes_list')
         else:
             comment = "You can delete only recipes created by yourself."
-            context = {'recipe': recipe, 'comment': comment}
-            return render(request, "recipe_details.html", context=context)
+            request.session['comment'] = comment
+            url = f'/recipe/{recipe.id}'
+            return redirect(url)
 
 
 class AddRecipeToFavouritesView(View):
     def get(self, request, id):
+        del request.session['message']
         recipe = get_object_or_404(Recipe, pk=id)
         user = get_object_or_404(FitUbiUser, user=request.user)
         if UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).exists():
@@ -254,6 +267,7 @@ class AddRecipeToFavouritesView(View):
 
 class CreateModifiedRecipeView(View):
     def get(self, request, id):
+        del request.session['message']
         recipe = get_object_or_404(Recipe, pk=id)
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         form = RecipeForm(initial=model_to_dict(recipe, exclude=['id']))
@@ -280,13 +294,40 @@ class CreateModifiedRecipeView(View):
 
         recipe = get_object_or_404(Recipe, pk=id)
         form = RecipeForm(instance=recipe)
-        form_int = RecipeIngredientsForm()
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         comment = 'Submit correct data. Remember that name must be unique.'
         return render(request, "new_recipe_form.html", {'recipe': recipe,
                                                         'form': form,
-                                                        'form_int': form_int,
                                                         'recipe_ingredients': recipe_ingredients,
+                                                        'comment': comment})
+
+
+class CreateRecipeView(View):
+    def get(self, request):
+        del request.session['message']
+        form = RecipeForm()
+        return render(request, "new_recipe_form.html", {'form': form})
+    def post(self, request):
+        form = RecipeForm(request.POST)
+
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            description = form.cleaned_data.get('description')
+            category = form.cleaned_data.get('category')
+            type = form.cleaned_data.get('type')
+            recipe = Recipe.objects.create(name=name, description=description,
+                                           category=category, type=type, created_by=request.user)
+            recipe.refresh_from_db()
+
+            user = get_object_or_404(FitUbiUser, user=request.user)
+            UserRecipes.objects.create(user=user, recipe=recipe, operation=4)
+
+            url = f'/modify_ingredients/{recipe.id}'
+            return redirect(url)
+
+        form = RecipeForm()
+        comment = 'Submit correct data. Remember that name must be unique.'
+        return render(request, "new_recipe_form.html", {'form': form,
                                                         'comment': comment})
 
 
