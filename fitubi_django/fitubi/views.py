@@ -117,8 +117,12 @@ class RecipesListView(View):
 class RecipeDetailsView(View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
-        user = get_object_or_404(FitUbiUser, user=request.user)
         macros = macros_total(recipe)
+        if request.user.is_anonymous:
+            return render(request, "recipe_details.html", {'recipe': recipe,
+                                                           'macros': macros})
+
+        user = get_object_or_404(FitUbiUser, user=request.user)
         if UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).exists():
             favourite_mark = True
         else:
@@ -126,12 +130,13 @@ class RecipeDetailsView(View):
         if request.session.has_key('comment'):
             comment = request.session['comment']
             return render(request, "recipe_details.html", {'recipe': recipe,
-                                                           'favourite_mark': favourite_mark,
-                                                           'macros': macros,
-                                                           'comment': comment})
+                                                            'favourite_mark': favourite_mark,
+                                                            'macros': macros,
+                                                            'comment': comment})
         return render(request, "recipe_details.html", {'recipe': recipe,
                                                        'favourite_mark': favourite_mark,
                                                        'macros': macros})
+
 
 
 class ModifyRecipeView(View):
