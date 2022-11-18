@@ -1,4 +1,7 @@
+from django.shortcuts import redirect
+
 from fitubi.models import RecipeIngredients
+import functools
 
 
 def kilo_to_pound(amount):
@@ -123,4 +126,19 @@ def clean_comment(request):
         pass
 
 
+def coderslab_check(request):
+    if 'coderslab' in request.user.email:
+        coders_surprise = "Welcome member of the CodersLab team. Thank you all for your invaluable help."
+        request.session['surprise'] = coders_surprise
+
+
+def surprise(view):
+    @functools.wraps(view)
+    def wrapper(request, *args, **kwargs):
+        email = request.user.email
+        if 'coderslab' in email:
+            coders_surprise = "Welcome member of the CodersLab team. Thank you all for your invaluable help."
+            request.session['surprise'] = coders_surprise
+        return view(request, *args, **kwargs)
+    return wrapper
 

@@ -48,7 +48,7 @@ class NewAccountView(View):
         if form_user.is_valid() and form_fitubi.is_valid():
             username = form_user.cleaned_data.get('username')
             password = form_user.cleaned_data.get('password')
-            email = form_user.cleaned_data.get('student')
+            email = form_user.cleaned_data.get('email')
             new_user = User.objects.create_user(username=username, password=password, email=email)
 
             new_user.fitubiuser.birth_date = form_fitubi.cleaned_data.get('birth_date')
@@ -62,7 +62,8 @@ class NewAccountView(View):
             user = authenticate(username=username, password=password)
             login(request, user)
             comment = "Congratulations! Your can now use FitUbi."
-            return render(request, "main.html", {'comment': comment})
+            request.session['comment'] = comment
+            return redirect('main')
         else:
             form_user = UserForm()
             form_fitubi = FitUbiUserForm()
@@ -70,8 +71,10 @@ class NewAccountView(View):
             return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi, 'comment': comment})
 
 
+
 class MainPageView(View):
     def get(self, request):
+        coderslab_check(request)
         recipes_all = list(Recipe.objects.all())
         random.shuffle(recipes_all)
         recipes_carousel = recipes_all[0:3]
@@ -130,9 +133,9 @@ class RecipeDetailsView(View):
         if request.session.has_key('comment'):
             comment = request.session['comment']
             return render(request, "recipe_details.html", {'recipe': recipe,
-                                                            'favourite_mark': favourite_mark,
-                                                            'macros': macros,
-                                                            'comment': comment})
+                                                           'favourite_mark': favourite_mark,
+                                                           'macros': macros,
+                                                           'comment': comment})
         return render(request, "recipe_details.html", {'recipe': recipe,
                                                        'favourite_mark': favourite_mark,
                                                        'macros': macros})
@@ -379,7 +382,5 @@ class UtilitiesView(View):
                 request.session['result'] = result
                 request.session['converter'] = converter
                 return redirect('recipes_list')
-            if 'submit' in request.POST:
-                return redirect('main')
 
 
