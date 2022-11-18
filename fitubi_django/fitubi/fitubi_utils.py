@@ -41,14 +41,6 @@ def fahrenheit_to_celsius(amount):
     return amount_c
 
 
-macros_gen = {
-    'carbs': 0,
-    'fats': 0,
-    'proteins': 0,
-    'calories': 0
-}
-
-
 def macros_total(recipe):
     macros = {
         'carbs': 0,
@@ -89,6 +81,13 @@ def calculate_bmr(fit_user):
         elif fit_user.activity == 5:
             bmr *= 1.9
     return bmr
+
+
+def clean_comment(request):
+    if request.session.has_key('comment'):
+        del request.session['comment']
+    else:
+        pass
 
 
 

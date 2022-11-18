@@ -90,7 +90,7 @@ class LogoutView(View):
 
 class RecipesListView(View):
     def get(self, request):
-        del request.session['message']
+        clean_comment(request)
         recipes = Recipe.objects.all().order_by('-updated')
         form = RecipeSearchForm()
         return render(request, "recipes_list.html", {'recipes': recipes,
@@ -136,7 +136,7 @@ class RecipeDetailsView(View):
 
 class ModifyRecipeView(View):
     def get(self, request, id):
-        del request.session['message']
+        clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
         user = request.user
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
@@ -176,7 +176,7 @@ class ModifyRecipeView(View):
 
 class ModifyIngredientsToRecipe(View):
     def get(self, request, id):
-        del request.session['message']
+        clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
         ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         form = RecipeIngredientsForm()
@@ -253,21 +253,44 @@ class DeleteRecipeView(View):
 
 class AddRecipeToFavouritesView(View):
     def get(self, request, id):
-        del request.session['message']
+        clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
         user = get_object_or_404(FitUbiUser, user=request.user)
         if UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).exists():
-            comment = 'already in favourites'
-            return render(request, "recipe_details.html", {'comment': comment})
+            comment = 'Recipe already in favourites.'
+            request.session['comment'] = comment
+            url = f'/recipe/{recipe.id}'
+            return redirect(url)
+
         UserRecipes.objects.create(user=user, recipe=recipe, operation=1)
-        comment = 'success'
-        return render(request, "recipe_details.html", {'comment': comment})
+        comment = 'Added recipe to favourites.'
+        request.session['comment'] = comment
+        url = f'/recipe/{recipe.id}'
+        return redirect(url)
         #return redirect('user_profile')
+
+
+class RemoveRecipeFromFavouritesView(View):
+    def get(self, request, id):
+        clean_comment(request)
+        recipe = get_object_or_404(Recipe, pk=id)
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        if UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).exists():
+            UserRecipes.objects.filter(user=user, recipe=recipe, operation=1).delete()
+            comment = 'Removed recipe from favourites.'
+            request.session['comment'] = comment
+            url = f'/recipe/{recipe.id}'
+            return redirect(url)
+            #return redirect('user_profile')
+        comment = 'Recipe not in favourites.'
+        request.session['comment'] = comment
+        url = f'/recipe/{recipe.id}'
+        return redirect(url)
 
 
 class CreateModifiedRecipeView(View):
     def get(self, request, id):
-        del request.session['message']
+        clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         form = RecipeForm(initial=model_to_dict(recipe, exclude=['id']))
@@ -304,7 +327,7 @@ class CreateModifiedRecipeView(View):
 
 class CreateRecipeView(View):
     def get(self, request):
-        del request.session['message']
+        clean_comment(request)
         form = RecipeForm()
         return render(request, "new_recipe_form.html", {'form': form})
     def post(self, request):
