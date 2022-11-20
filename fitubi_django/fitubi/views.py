@@ -384,3 +384,14 @@ class UtilitiesView(View):
                 return redirect('recipes_list')
 
 
+class ProfileView(View):
+    def get(self, request):
+        user = request.user
+        bmi = calculate_bmi(user.fitubiuser)
+        bmr = calculate_bmr(user.fitubiuser)
+        bmi_comment = process_bmi(bmi)
+        return render(request, 'profile.html', {'user': user,
+                                                'bmi': bmi,
+                                                'bmr': bmr,
+                                                'bmi_comment': bmi_comment})
+

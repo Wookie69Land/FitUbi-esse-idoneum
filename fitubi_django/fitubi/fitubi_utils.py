@@ -1,5 +1,3 @@
-from django.shortcuts import redirect
-
 from fitubi.models import RecipeIngredients
 import functools
 
@@ -95,7 +93,20 @@ def macros_total(recipe):
 
 def calculate_bmi(fit_user):
     bmi = fit_user.weight / (fit_user.height/100)**2
-    return bmi
+    return round(bmi, 4)
+
+
+def process_bmi(bmi):
+    comment = ''
+    if bmi <= 18.5:
+        comment = 'you are underweight'
+    elif 18.5 < bmi <= 24.9:
+        comment = 'your weight is healthy'
+    elif 24.9 < bmi <= 29.9:
+        comment = 'you are overweight'
+    elif bmi >= 30:
+        comment = 'you are obese'
+    return comment
 
 
 def calculate_bmr(fit_user):
@@ -141,4 +152,3 @@ def surprise(view):
             request.session['surprise'] = coders_surprise
         return view(request, *args, **kwargs)
     return wrapper
-
