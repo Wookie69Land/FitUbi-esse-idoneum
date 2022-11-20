@@ -410,7 +410,7 @@ class EditProfileView(View):
         if form_user.is_valid() and form_fitubi.is_valid():
             form_user.save()
             form_fitubi.save()
-            redirect('profile')
+            return redirect('profile')
         else:
             form_user = EditUserForm(instance=user)
             form_fitubi = FitUbiUserForm(instance=user.fitubiuser)
