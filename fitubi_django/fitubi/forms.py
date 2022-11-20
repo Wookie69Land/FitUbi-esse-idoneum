@@ -4,22 +4,28 @@ from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, RecipeIngre
 from fitubi.fitubi_utils import CONV_OPTIONS
 
 
-class LoginForm(ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-
-
-class LoginForm2(forms.Form):
-    login = forms.CharField(max_length=64)
-    password = forms.CharField(widget=forms.PasswordInput)
-
-
 class UserForm(ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput())
+    password2 = forms.CharField(widget=forms.PasswordInput())
     class Meta:
         model = User
         fields = ['username', 'password', 'email']
+
+    def clean(self):
+        cleaned_data = super(UserForm, self).clean()
+        password = cleaned_data.get("password")
+        password2 = cleaned_data.get("confirm_password")
+
+        if password != password2:
+            raise forms.ValidationError(
+                "password and confirm_password does not match"
+            )
+
+
+class EditUserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
 
 
 class FitUbiUserForm(ModelForm):

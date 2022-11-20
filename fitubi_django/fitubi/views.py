@@ -395,3 +395,27 @@ class ProfileView(View):
                                                 'bmr': bmr,
                                                 'bmi_comment': bmi_comment})
 
+
+class EditProfileView(View):
+    def get(self, request):
+        user = request.user
+        form_user = EditUserForm(instance=user)
+        form_fitubi = FitUbiUserForm(instance=user.fitubiuser)
+        return render(request, 'edit_profile.html', {'form_user': form_user,
+                                                     'form_fitubi': form_fitubi})
+    def post(self, request):
+        user = request.user
+        form_user = EditUserForm(request.POST, instance=user)
+        form_fitubi = FitUbiUserForm(request.POST, instance=user.fitubiuser)
+        if form_user.is_valid() and form_fitubi.is_valid():
+            form_user.save()
+            form_fitubi.save()
+            redirect('profile')
+        else:
+            form_user = EditUserForm(instance=user)
+            form_fitubi = FitUbiUserForm(instance=user.fitubiuser)
+            comment = "Check if data is correct"
+            return render(request, 'edit_profile.html', {'form_user': form_user,
+                                                         'form_fitubi': form_fitubi,
+                                                         'comment': comment})
+

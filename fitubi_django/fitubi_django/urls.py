@@ -19,7 +19,7 @@ from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView,
     RecipesListView, LogoutView, RecipeDetailsView, ModifyRecipeView, \
     ModifyIngredientsToRecipe, RemoveIngredientRecipeView, DeleteRecipeView, \
     AddRecipeToFavouritesView, CreateModifiedRecipeView, CreateRecipeView, \
-    RemoveRecipeFromFavouritesView, UtilitiesView, ProfileView
+    RemoveRecipeFromFavouritesView, UtilitiesView, ProfileView, EditProfileView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,4 +41,5 @@ urlpatterns = [
     path('new_recipe/', CreateRecipeView.as_view(), name='new_recipe'),
     path('utilities/', UtilitiesView.as_view(), name='utilities'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('edit_profile/', EditProfileView.as_view(), name='edit_profile'),
 ]
