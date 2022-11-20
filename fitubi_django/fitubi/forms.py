@@ -1,25 +1,37 @@
 from django import forms
 from django.forms import ModelForm
+from django.core.validators import ValidationError
+
 from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
 from fitubi.fitubi_utils import CONV_OPTIONS
 
 
 class UserForm(ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'email', 'password']
 
-    def clean(self):
-        cleaned_data = super(UserForm, self).clean()
-        password = cleaned_data.get("password")
-        password2 = cleaned_data.get("confirm_password")
+    def clean_username(self):
+        if User.objects.filter(username=self.cleaned_data.get('username')).exists():
+            raise ValidationError('This login is already taken')
+        return self.cleaned_data.get('username')
 
-        if password != password2:
-            raise forms.ValidationError(
-                "password and confirm_password does not match"
-            )
+    def clean_password2(self):
+        if self.cleaned_data.get('password') != self.cleaned_data.get('password2'):
+            raise ValidationError('Passwords do not match!')
+        return self.cleaned_data.get('password2')
+
+
+class UpdatePasswordForm(forms.Form):
+    password = forms.CharField(label='Hasło', max_length=100, widget=forms.PasswordInput)
+    password_repeat = forms.CharField(label='Powtórzone hasło', max_length=100, widget=forms.PasswordInput)
+
+    def clean_password_repeat(self):
+        if self.cleaned_data.get('password') != self.cleaned_data.get('password_repeat'):
+            raise ValidationError('Podane hasła różnią się od siebie!')
+        return self.cleaned_data.get('password_repeat')
 
 
 class EditUserForm(ModelForm):

@@ -41,7 +41,8 @@ class NewAccountView(View):
     def get(self, request):
         form_user = UserForm()
         form_fitubi = FitUbiUserForm()
-        return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi})
+        return render(request, "register.html", {'form_user': form_user,
+                                                 'form_fitubi': form_fitubi})
     def post(self, request):
         form_user = UserForm(request.POST)
         form_fitubi = FitUbiUserForm(request.POST)

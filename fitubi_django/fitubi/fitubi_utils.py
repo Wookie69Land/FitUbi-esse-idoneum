@@ -127,7 +127,7 @@ def calculate_bmr(fit_user):
             bmr *= 1.725
         elif fit_user.activity == 5:
             bmr *= 1.9
-    return bmr
+    return round(bmr)
 
 
 def clean_comment(request):
