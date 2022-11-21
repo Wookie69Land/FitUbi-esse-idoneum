@@ -107,7 +107,7 @@ class ConverterForm(forms.Form):
 
 
 class FridgeForm(ModelForm):
-    ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all())
+    ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all().order_by('name'))
     class Meta:
         model = Recipe
         fields = ['ingredients', 'category', 'type']

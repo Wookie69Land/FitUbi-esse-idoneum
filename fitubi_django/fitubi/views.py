@@ -73,7 +73,6 @@ class NewAccountView(View):
             return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi, 'comment': comment})
 
 
-
 class MainPageView(View):
     def get(self, request):
         coderslab_check(request)
@@ -143,8 +142,7 @@ class RecipeDetailsView(View):
                                                        'macros': macros})
 
 
-
-class ModifyRecipeView(View):
+class ModifyRecipeView(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
@@ -184,7 +182,7 @@ class ModifyRecipeView(View):
                                                     'recipe_ingredients': recipe_ingredients})
 
 
-class ModifyIngredientsToRecipe(View):
+class ModifyIngredientsToRecipe(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
@@ -239,7 +237,7 @@ class ModifyIngredientsToRecipe(View):
             return redirect(url)
 
 
-class RemoveIngredientRecipeView(View):
+class RemoveIngredientRecipeView(LoginRequiredMixin, View):
     def get(self, request, ing_id, rec_id):
         ingredient = get_object_or_404(Ingredient, pk=ing_id)
         recipe = get_object_or_404(Recipe, pk=rec_id)
@@ -247,7 +245,7 @@ class RemoveIngredientRecipeView(View):
         return redirect('recipe_ingredients', id=rec_id)
 
 
-class DeleteRecipeView(View):
+class DeleteRecipeView(LoginRequiredMixin, View):
     def get(self, request, id):
         recipe = get_object_or_404(Recipe, pk=id)
         user = request.user
@@ -261,7 +259,7 @@ class DeleteRecipeView(View):
             return redirect(url)
 
 
-class AddRecipeToFavouritesView(View):
+class AddRecipeToFavouritesView(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
@@ -280,7 +278,7 @@ class AddRecipeToFavouritesView(View):
         #return redirect('user_profile')
 
 
-class RemoveRecipeFromFavouritesView(View):
+class RemoveRecipeFromFavouritesView(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
@@ -298,7 +296,7 @@ class RemoveRecipeFromFavouritesView(View):
         return redirect(url)
 
 
-class CreateModifiedRecipeView(View):
+class CreateModifiedRecipeView(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         recipe = get_object_or_404(Recipe, pk=id)
@@ -335,7 +333,7 @@ class CreateModifiedRecipeView(View):
                                                         'comment': comment})
 
 
-class CreateRecipeView(View):
+class CreateRecipeView(LoginRequiredMixin, View):
     def get(self, request):
         clean_comment(request)
         form = RecipeForm()
