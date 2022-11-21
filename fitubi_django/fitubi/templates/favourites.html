@@ -1,0 +1,28 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    <table class="table table-bordered">
+      <tr>
+          <th>
+              Favourite recipes
+          </th>
+          <th>
+              Favourite plans
+          </th>
+      </tr>
+      <tr>
+          <td>
+          <ol></ol>
+          {% for row in favourite_recipes %}
+              <li><a href="/recipe/{{ row.recipe.id }}">{{ row.recipe }}</a></li>
+          {% endfor %}
+          </ol>
+          </td>
+          <td>
+
+          </td>
+      </tr>
+    </table>
+
+{% endblock %}

@@ -1,5 +1,6 @@
-from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.forms.models import model_to_dict
 
@@ -385,7 +386,7 @@ class UtilitiesView(View):
                 return redirect('recipes_list')
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         bmi = calculate_bmi(user.fitubiuser)
@@ -397,7 +398,7 @@ class ProfileView(View):
                                                 'bmi_comment': bmi_comment})
 
 
-class EditProfileView(View):
+class EditProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         form_user = EditUserForm(instance=user)
@@ -420,3 +421,59 @@ class EditProfileView(View):
                                                          'form_fitubi': form_fitubi,
                                                          'comment': comment})
 
+
+class ChangePasswordView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = UpdatePasswordForm()
+        return render(request, 'update_password.html', {'form': form})
+    def post(self, request):
+        user = request.user
+        form = UpdatePasswordForm(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+            user.set_password(password)
+            user.save()
+            return redirect('login')
+
+
+class FavouritesView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        favourite_recipes = UserRecipes.objects.filter(user=user, operation=1)
+        #favourite_plans = UserPlans.objects.filter(user=user, operation=1)
+        return render(request, 'favourites.html', {'favourite_recipes': favourite_recipes})
+
+
+class FridgeView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = FridgeForm()
+        return render(request, 'fridge.html', {'form': form})
+    def post(self, request):
+        form = FridgeForm(request.POST)
+        if form.is_valid():
+            ingredients = form.cleaned_data.get('ingredients')
+            count = ingredients.count()
+            recipes_all = Recipe.objects.filter(ingredients__in=ingredients).distinct()
+
+            for recipe in recipes_all:
+                excluded_count = 0
+                for ingredient in recipe.ingredients.all():
+                    if ingredient not in ingredients:
+                        excluded_count += 1
+                        if excluded_count == 2:
+                            recipes_all.exclude(pk=recipe.id)
+                            print(recipes_all)
+
+
+            recipes = []
+            for recipe in recipes_all:
+                if len(recipe.ingredients.all()) <= count:
+                    recipes.append(recipe)
+
+            recipes_one_missing = []
+            for recipe in recipes_all:
+                if len(recipe.ingredients.all()) == count + 1:
+                    recipes_one_missing.append(recipe)
+            return render(request, 'fridge.html', {'form': form,
+                                                   'recipes': recipes,
+                                                   'recipes_one_missing': recipes_one_missing})

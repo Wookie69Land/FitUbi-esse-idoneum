@@ -4,11 +4,11 @@
 <div class="btn-group" role="group">
     <a href="{% url 'edit_profile' %}">
         <button type="button" class="btn btn-primary">edit your profile</button></a>
-    <a href="">
+    <a href="{% url 'fridge' %}">
         <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your fridge</button></a>
     <a href="">
         <button type="button" class="btn btn-primary">diet plans</button></a>
-    <a href="">
+    <a href="{% url 'favourites' %}">
         <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your favourites</button></a>
 
 </div><br>
@@ -118,7 +118,7 @@
         </thead>
         <tbody class="table-group-divider">
             <td class="table-dark">
-                {{ bmr }}
+                {{ bmr }} cal
             </td>
             <td class="table-info">
                 We calculated this according your BMR (basal metabolic rate - depended on height, weight, age)

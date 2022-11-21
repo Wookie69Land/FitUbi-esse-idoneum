@@ -138,9 +138,10 @@ def clean_comment(request):
 
 
 def coderslab_check(request):
-    if 'coderslab' in request.user.email:
-        coders_surprise = "Welcome member of the CodersLab team. Thank you all for your invaluable help."
-        request.session['surprise'] = coders_surprise
+    if request.user.is_authenticated:
+        if 'coderslab' in request.user.email:
+            coders_surprise = "Welcome member of the CodersLab team. Thank you all for your invaluable help."
+            request.session['surprise'] = coders_surprise
 
 
 def surprise(view):

@@ -8,7 +8,7 @@ from fitubi.fitubi_utils import CONV_OPTIONS
 
 class UserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
     class Meta:
         model = User
         fields = ['username', 'email', 'password']
@@ -25,13 +25,13 @@ class UserForm(ModelForm):
 
 
 class UpdatePasswordForm(forms.Form):
-    password = forms.CharField(label='Hasło', max_length=100, widget=forms.PasswordInput)
-    password_repeat = forms.CharField(label='Powtórzone hasło', max_length=100, widget=forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
     def clean_password_repeat(self):
-        if self.cleaned_data.get('password') != self.cleaned_data.get('password_repeat'):
-            raise ValidationError('Podane hasła różnią się od siebie!')
-        return self.cleaned_data.get('password_repeat')
+        if self.cleaned_data.get('password') != self.cleaned_data.get('password2'):
+            raise ValidationError('Passwords do not match!')
+        return self.cleaned_data.get('password2')
 
 
 class EditUserForm(ModelForm):
@@ -104,3 +104,15 @@ class ArticleForm(ModelForm):
 class ConverterForm(forms.Form):
     converter = forms.ChoiceField(choices=CONV_OPTIONS)
     quantity = forms.DecimalField(max_digits=10, decimal_places=2, step_size=0.1)
+
+
+class FridgeForm(ModelForm):
+    ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all())
+    class Meta:
+        model = Recipe
+        fields = ['ingredients', 'category', 'type']
+
+    def __init__(self, *args, **kwargs):
+        super(FridgeForm, self).__init__(*args, **kwargs)
+        self.fields['category'].required = False
+        self.fields['type'].required = False
