@@ -500,30 +500,98 @@ class NewPlanView(LoginRequiredMixin, View):
     def get(self, request):
         clean_comment(request)
         form = PlanForm()
-        form_plan_recipe = RecipePlanForm()
+        return render(request, 'new_plan.html', {'form': form})
     def post(self, request):
         form = PlanForm(request.POST)
-        form_plan_recipe = RecipePlanForm(request.POST)
-
         if form.is_valid():
             name = form.cleaned_data.get('name')
             description = form.cleaned_data.get('description')
-            recipe = Recipe.objects.create(name=name,
-                                           description=description,
-                                           created_by=request.user)
-            recipe.refresh_from_db()
+            plan = Plan.objects.create(name=name,
+                                       description=description,
+                                       created_by=request.user)
+            plan.refresh_from_db()
 
             user = get_object_or_404(FitUbiUser, user=request.user)
-            UserRecipes.objects.create(user=user, recipe=recipe, operation=4)
+            UserPlans.objects.create(user=user, plan=plan, operation=4)
 
-            url = f'/modify_ingredients/{recipe.id}'
+            if "save" in request.POST:
+                return redirect('profile')
+            url = f'/plans/modify/{plan.id}'
             return redirect(url)
 
-        form = RecipeForm()
+        form = PlanForm()
         comment = 'Submit correct data. Remember that name must be unique.'
-        return render(request, "new_recipe_form.html", {'form': form,
-                                                        'comment': comment})
+        return render(request, "new_plan.html", {'form': form,
+                                                 'comment': comment})
 
+
+class PlanByDayView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        clean_comment(request)
+        plan = get_object_or_404(Plan, pk=id)
+        form = PlanForm(instance=plan)
+        plan_recipes = RecipePlan.objects.filter(plan=plan)
+        monday = plan_recipes.filter(day=1)
+        print(monday)
+        form_plan_recipe = RecipePlanForm()
+        return render(request, 'new_plan.html', {'form': form,
+                                                 'form_plan_recipe': form_plan_recipe,
+                                                 'plan_recipes': plan_recipes})
+    def post(self, request, id):
+        plan = get_object_or_404(Plan, pk=id)
+        form = PlanForm(request.POST, instance=plan)
+        form_plan_recipe = RecipePlanForm(request.POST)
+
+        if form.is_valid() and form_plan_recipe.is_valid():
+            form.save()
+            day = form_plan_recipe.cleaned_data.get('day')
+            meal = form_plan_recipe.cleaned_data.get('meal')
+            recipe = form_plan_recipe.cleaned_data.get('recipe')
+            RecipePlan.objects.create(day=day, meal=meal, recipe=recipe, plan=plan)
+            plan.refresh_from_db()
+
+            user = get_object_or_404(FitUbiUser, user=request.user)
+            if UserPlans.objects.filter(user=user, plan=plan, operation=2).exists():
+                user_plan = UserRecipes.objects.filter(user=user, plan=plan, operation=2)
+                user_plan_update = user_plan.last()
+                user_plan_update.save()
+            else:
+                UserPlans.objects.create(user=user, plan=plan, operation=2)
+
+            if "save" in request.POST:
+                return redirect('profile')
+            url = f'/plans/modify/{plan.id}'
+            return redirect(url)
+
+        form = PlanForm(instance=plan)
+        comment = 'Submit correct data. Remember that name must be unique.'
+        plan_recipes = RecipePlan.objects.filter(plan=plan)
+        form_plan_recipe = RecipePlanForm()
+        return render(request, 'new_plan.html', {'form': form,
+                                                 'form_plan_recipe': form_plan_recipe,
+                                                 'plan_recipes': plan_recipes,
+                                                 'comment': comment})
+
+
+class PlanDetailView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        plan = get_object_or_404(Plan, pk=id)
+        monday = RecipePlan.objects.monday(plan)
+        tuesday = RecipePlan.objects.tuesday(plan)
+        wednesday = RecipePlan.objects.wednesday(plan)
+        thursday = RecipePlan.objects.thursday(plan)
+        friday = RecipePlan.objects.friday(plan)
+        saturday = RecipePlan.objects.saturday(plan)
+        sunday = RecipePlan.objects.sunday(plan)
+        context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday}
+        # plan_by_day = ()
+        # for day in DAYS:
+        #     day_plan = RecipePlan.objects.filter(plan=plan, day=day[0]).order_by('meal')
+        #     day_tuple = (day[1], day_plan)
+        #     plan_by_day = plan_by_day + day_tuple
+        # print(plan_by_day)
+        return render(request, 'plan_detail.html', context=context)
 
 
 

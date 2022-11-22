@@ -89,7 +89,7 @@ class PlanForm(ModelForm):
 
 
 class RecipePlanForm(ModelForm):
-    recipe = forms.ModelMultipleChoiceField(queryset=Recipe.objects.all())
+    recipe = forms.ModelChoiceField(queryset=Recipe.objects.all())
     class Meta:
         model = RecipePlan
         fields = ['day', 'meal', 'recipe']

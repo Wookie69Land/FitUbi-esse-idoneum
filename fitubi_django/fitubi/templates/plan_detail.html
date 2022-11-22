@@ -1,0 +1,165 @@
+{% extends "main.html" %}
+
+{% block content %}
+    {% if comment %}<p style="color: darkred">{{ comment }}</p>{% endif %}
+
+    {% if user.is_authenticated %}
+    <a href="plans/modify/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Modify </span></a>
+    <a href="/delete_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Delete </span></a>
+    <a href="/add_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Add to favourites </span></a>
+    <a href="/remove_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Remove from favourites </span></a>
+    <a href="/new_modified_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+        Create new plan based on this one </span></a>
+    {% endif %}
+
+    <table class="table borderless">
+        <tbody>
+            <tr>
+                <th scope="row" class="col-2">Name</th>
+                <th scope="row" class="col-2">Description</th>
+                <th scope="row" class="col-2">Created and updated</th>
+            </tr>
+            <tr>
+                <td>
+                    {{ plan }}
+                    {% if favourite_mark %}<span style="color: greenyellow"
+                                                 class="badge bg-primary rounded-pill">
+                    favourite </span>{% endif %}
+                </td>
+                <td>
+                    {{ plan.description }}
+                </td>
+                <td>
+                    created by: {{ plan.created_by }}<br>
+                    {{ plan.created }}, {{ plan.updated }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <strong>Macros average per day:</strong>
+    <table class="table borderless">
+        <tbody>
+            <tr>
+                <th scope="row" class="col-2">Carbs</th>
+                <th scope="row" class="col-2">Fats</th>
+                <th scope="row" class="col-2">Proteins</th>
+                <th scope="row" class="col-2"
+                    style="color: darkolivegreen">Calories</th>
+            </tr>
+            <tr>
+                <td>
+                    {{ macros.carbs }}
+                </td>
+                <td>
+                    {{ macros.fats }}
+                </td>
+                <td>
+                    {{ macros.proteins }}
+                </td>
+                <td>
+                    {{ macros.calories }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        <table>
+            <tr>
+                <th>
+                    Monday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in monday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Tuesday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in tuesday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Wednesday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in wednesday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Thursday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in thursday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Friday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in friday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Saturday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in saturday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+            <tr>
+                <th>
+                    Sunday
+                </th>
+                <tbody class="table-group-divider">
+                <td>
+                    {% for row in sunday %}
+                        <p>{{ row.get_meal_display }}:</p>
+                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                    {% endfor %}
+                </td>
+                </tbody>
+            </tr>
+        </table>
+    </div>
+
+{% endblock %}
