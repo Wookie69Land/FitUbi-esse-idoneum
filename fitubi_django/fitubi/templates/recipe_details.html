@@ -66,6 +66,25 @@
             </tr>
         </tbody>
     </table>
+    <strong>Specials and dangers:</strong>
+    <table class="table borderless">
+        <tbody>
+        {% for ingredient in recipe.ingredients.all %}
+            <tr>
+                {% if ingredient.specials %}
+                <td class="table-success">
+                    {{ ingredient.name|lower }}: {{ ingredient.specials }}
+                </td>
+                {% endif %}
+                {% if ingredient.dangers %}
+                <td class="table-danger">
+                    {{ ingredient.name|lower }}: {{ ingredient.dangers }}
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     {% if user.is_authenticated %}
     <a href="/modify_recipe/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
