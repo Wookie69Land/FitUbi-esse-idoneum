@@ -480,3 +480,51 @@ class FridgeView(LoginRequiredMixin, View):
             return render(request, 'fridge.html', {'form': form,
                                                    'recipes': recipes,
                                                    'recipes_one_missing': recipes_one_missing})
+
+
+class PlansView(LoginRequiredMixin, View):
+    def get(self, request):
+        clean_comment(request)
+        plans = Plan.objects.all().order_by('-created')
+        return render(request, 'plans.html', {'plans': plans})
+    def post(self, request):
+        query = request.POST.get('search')
+        if query:
+            plans = Plan.objects.search(query)
+        else:
+            plans = Plan.objects.all()
+        return render(request, "plans.html", {'plans': plans})
+
+
+class NewPlanView(LoginRequiredMixin, View):
+    def get(self, request):
+        clean_comment(request)
+        form = PlanForm()
+        form_plan_recipe = RecipePlanForm()
+    def post(self, request):
+        form = PlanForm(request.POST)
+        form_plan_recipe = RecipePlanForm(request.POST)
+
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            description = form.cleaned_data.get('description')
+            recipe = Recipe.objects.create(name=name,
+                                           description=description,
+                                           created_by=request.user)
+            recipe.refresh_from_db()
+
+            user = get_object_or_404(FitUbiUser, user=request.user)
+            UserRecipes.objects.create(user=user, recipe=recipe, operation=4)
+
+            url = f'/modify_ingredients/{recipe.id}'
+            return redirect(url)
+
+        form = RecipeForm()
+        comment = 'Submit correct data. Remember that name must be unique.'
+        return render(request, "new_recipe_form.html", {'form': form,
+                                                        'comment': comment})
+
+
+
+
+

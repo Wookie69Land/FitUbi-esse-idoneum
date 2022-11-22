@@ -127,6 +127,7 @@ class Plan(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     recipes = models.ManyToManyField(Recipe, through='RecipePlan')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     objects = PlanManager()
 
