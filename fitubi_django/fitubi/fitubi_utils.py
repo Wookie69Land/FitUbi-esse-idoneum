@@ -1,5 +1,6 @@
-from fitubi.models import RecipeIngredients
+from fitubi.models import RecipeIngredients, Recipe
 import functools
+from django.shortcuts import render
 
 
 def kilo_to_pound(amount):
@@ -153,3 +154,5 @@ def surprise(view):
             request.session['surprise'] = coders_surprise
         return view(request, *args, **kwargs)
     return wrapper
+
+

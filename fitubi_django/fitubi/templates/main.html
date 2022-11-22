@@ -37,8 +37,10 @@
               </div>
                 <form class="d-flex" role="search" method="post">
                     {% csrf_token %}
-                    <input class="form-control me-2" type="search" placeholder="Search through recipes" aria-label="Search" name="search">
-                    <button class="btn btn-outline-success" type="submit" style="color: springgreen">Search</button>
+                    <input class="form-control me-2" type="search"
+                           placeholder="Search through recipes" aria-label="Search" name="query">
+                    <button class="btn btn-outline-success" type="submit"
+                            style="color: springgreen">Search</button>
                 </form>
             </div>
           </div>

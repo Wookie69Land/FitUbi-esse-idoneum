@@ -163,16 +163,22 @@ MEALS = (
 class RecipePlanManager(models.Manager):
     def monday(self, plan):
         return self.get_queryset().filter(plan=plan, day=1).order_by('meal')
+
     def tuesday(self, plan):
         return self.get_queryset().filter(plan=plan, day=2).order_by('meal')
+
     def wednesday(self, plan):
         return self.get_queryset().filter(plan=plan, day=3).order_by('meal')
+
     def thursday(self, plan):
         return self.get_queryset().filter(plan=plan, day=4).order_by('meal')
+
     def friday(self, plan):
         return self.get_queryset().filter(plan=plan, day=5).order_by('meal')
+
     def saturday(self, plan):
         return self.get_queryset().filter(plan=plan, day=6).order_by('meal')
+
     def sunday(self, plan):
         return self.get_queryset().filter(plan=plan, day=6).order_by('meal')
 

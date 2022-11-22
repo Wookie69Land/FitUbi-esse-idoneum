@@ -81,7 +81,7 @@ class MainPageView(View):
         recipes_carousel = recipes_all[0:3]
         return render(request, "main.html", {'recipes_carousel': recipes_carousel})
     def post(self, request):
-        query = request.POST.get('search')
+        query = request.POST.get('query')
         recipes = Recipe.objects.search(query)
         return render(request, "recipes_list.html", {'recipes': recipes})
 
@@ -100,6 +100,11 @@ class RecipesListView(View):
         return render(request, "recipes_list.html", {'recipes': recipes,
                                                      'form': form})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         query = request.POST.get('search')
         if query:
             recipes = Recipe.objects.search(query)
@@ -140,6 +145,11 @@ class RecipeDetailsView(View):
         return render(request, "recipe_details.html", {'recipe': recipe,
                                                        'favourite_mark': favourite_mark,
                                                        'macros': macros})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class ModifyRecipeView(LoginRequiredMixin, View):
@@ -158,6 +168,11 @@ class ModifyRecipeView(LoginRequiredMixin, View):
         url = f'/recipe/{recipe.id}'
         return redirect(url)
     def post(self, request, id):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         recipe = get_object_or_404(Recipe, pk=id)
         user = get_object_or_404(FitUbiUser, user=request.user)
         form = RecipeForm(request.POST, instance=recipe)
@@ -193,6 +208,11 @@ class ModifyIngredientsToRecipe(LoginRequiredMixin, View):
                                                                  'form': form})
 
     def post(self, request, id):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         recipe = get_object_or_404(Recipe, pk=id)
         if 'add' in request.POST:
             form = RecipeIngredientsForm(request.POST)
@@ -243,6 +263,11 @@ class RemoveIngredientRecipeView(LoginRequiredMixin, View):
         recipe = get_object_or_404(Recipe, pk=rec_id)
         recipe.ingredients.remove(ingredient)
         return redirect('recipe_ingredients', id=rec_id)
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class DeleteRecipeView(LoginRequiredMixin, View):
@@ -275,7 +300,7 @@ class AddRecipeToFavouritesView(LoginRequiredMixin, View):
         request.session['comment'] = comment
         url = f'/recipe/{recipe.id}'
         return redirect(url)
-        #return redirect('user_profile')
+
 
 
 class RemoveRecipeFromFavouritesView(LoginRequiredMixin, View):
@@ -289,7 +314,6 @@ class RemoveRecipeFromFavouritesView(LoginRequiredMixin, View):
             request.session['comment'] = comment
             url = f'/recipe/{recipe.id}'
             return redirect(url)
-            #return redirect('user_profile')
         comment = 'Recipe not in favourites.'
         request.session['comment'] = comment
         url = f'/recipe/{recipe.id}'
@@ -306,6 +330,11 @@ class CreateModifiedRecipeView(LoginRequiredMixin, View):
                                                         'form': form,
                                                         'recipe_ingredients': recipe_ingredients})
     def post(self, request, id):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         form = RecipeForm(request.POST)
 
         if form.is_valid():
@@ -339,8 +368,12 @@ class CreateRecipeView(LoginRequiredMixin, View):
         form = RecipeForm()
         return render(request, "new_recipe_form.html", {'form': form})
     def post(self, request):
-        form = RecipeForm(request.POST)
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
+        form = RecipeForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data.get('name')
             description = form.cleaned_data.get('description')
@@ -368,6 +401,11 @@ class UtilitiesView(View):
         form = ConverterForm()
         return render(request, 'utilities.html', {'form': form})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         form = ConverterForm(request.POST)
         if form.is_valid():
             converter = int(form.cleaned_data.get('converter'))
@@ -394,6 +432,11 @@ class ProfileView(LoginRequiredMixin, View):
                                                 'bmi': bmi,
                                                 'bmr': bmr,
                                                 'bmi_comment': bmi_comment})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class EditProfileView(LoginRequiredMixin, View):
@@ -404,6 +447,11 @@ class EditProfileView(LoginRequiredMixin, View):
         return render(request, 'edit_profile.html', {'form_user': form_user,
                                                      'form_fitubi': form_fitubi})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         user = request.user
         form_user = EditUserForm(request.POST, instance=user)
         form_fitubi = FitUbiUserForm(request.POST, instance=user.fitubiuser)
@@ -425,6 +473,11 @@ class ChangePasswordView(LoginRequiredMixin, View):
         form = UpdatePasswordForm()
         return render(request, 'update_password.html', {'form': form})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         user = request.user
         form = UpdatePasswordForm(request.POST)
         if form.is_valid():
@@ -440,6 +493,11 @@ class FavouritesView(LoginRequiredMixin, View):
         favourite_recipes = UserRecipes.objects.filter(user=user, operation=1)
         #favourite_plans = UserPlans.objects.filter(user=user, operation=1)
         return render(request, 'favourites.html', {'favourite_recipes': favourite_recipes})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class FridgeView(LoginRequiredMixin, View):
@@ -447,6 +505,11 @@ class FridgeView(LoginRequiredMixin, View):
         form = FridgeForm()
         return render(request, 'fridge.html', {'form': form})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         form = FridgeForm(request.POST)
         if form.is_valid():
             ingredients = form.cleaned_data.get('ingredients')
@@ -488,6 +551,11 @@ class PlansView(LoginRequiredMixin, View):
         plans = Plan.objects.all().order_by('-created')
         return render(request, 'plans.html', {'plans': plans})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         query = request.POST.get('search')
         if query:
             plans = Plan.objects.search(query)
@@ -502,6 +570,11 @@ class NewPlanView(LoginRequiredMixin, View):
         form = PlanForm()
         return render(request, 'new_plan.html', {'form': form})
     def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         form = PlanForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data.get('name')
@@ -538,6 +611,11 @@ class PlanByDayView(LoginRequiredMixin, View):
                                                  'form_plan_recipe': form_plan_recipe,
                                                  'plan_recipes': plan_recipes})
     def post(self, request, id):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
         plan = get_object_or_404(Plan, pk=id)
         form = PlanForm(request.POST, instance=plan)
         form_plan_recipe = RecipePlanForm(request.POST)
@@ -592,6 +670,11 @@ class PlanDetailView(LoginRequiredMixin, View):
         #     plan_by_day = plan_by_day + day_tuple
         # print(plan_by_day)
         return render(request, 'plan_detail.html', context=context)
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 
