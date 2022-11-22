@@ -263,11 +263,6 @@ class RemoveIngredientRecipeView(LoginRequiredMixin, View):
         recipe = get_object_or_404(Recipe, pk=rec_id)
         recipe.ingredients.remove(ingredient)
         return redirect('recipe_ingredients', id=rec_id)
-    def post(self, request):
-        if request.POST.get('query'):
-            query = request.POST.get('query')
-            recipes = Recipe.objects.search(query)
-            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class DeleteRecipeView(LoginRequiredMixin, View):
@@ -598,18 +593,18 @@ class NewPlanView(LoginRequiredMixin, View):
                                                  'comment': comment})
 
 
-class PlanByDayView(LoginRequiredMixin, View):
+class PlanModifyView(LoginRequiredMixin, View):
     def get(self, request, id):
         clean_comment(request)
         plan = get_object_or_404(Plan, pk=id)
         form = PlanForm(instance=plan)
-        plan_recipes = RecipePlan.objects.filter(plan=plan)
-        monday = plan_recipes.filter(day=1)
-        print(monday)
         form_plan_recipe = RecipePlanForm()
-        return render(request, 'new_plan.html', {'form': form,
-                                                 'form_plan_recipe': form_plan_recipe,
-                                                 'plan_recipes': plan_recipes})
+
+        monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
+        context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday,
+                   'sunday': sunday, 'form': form, 'form_plan_recipe': form_plan_recipe}
+        return render(request, 'new_plan.html', context=context)
     def post(self, request, id):
         if request.POST.get('query'):
             query = request.POST.get('query')
@@ -630,7 +625,7 @@ class PlanByDayView(LoginRequiredMixin, View):
 
             user = get_object_or_404(FitUbiUser, user=request.user)
             if UserPlans.objects.filter(user=user, plan=plan, operation=2).exists():
-                user_plan = UserRecipes.objects.filter(user=user, plan=plan, operation=2)
+                user_plan = UserPlans.objects.filter(user=user, plan=plan, operation=2)
                 user_plan_update = user_plan.last()
                 user_plan_update.save()
             else:
@@ -642,33 +637,21 @@ class PlanByDayView(LoginRequiredMixin, View):
             return redirect(url)
 
         form = PlanForm(instance=plan)
-        comment = 'Submit correct data. Remember that name must be unique.'
-        plan_recipes = RecipePlan.objects.filter(plan=plan)
         form_plan_recipe = RecipePlanForm()
-        return render(request, 'new_plan.html', {'form': form,
-                                                 'form_plan_recipe': form_plan_recipe,
-                                                 'plan_recipes': plan_recipes,
-                                                 'comment': comment})
+        comment = 'Submit correct data. Remember that name must be unique.'
+        monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
+        context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday,
+                   'form': form, 'form_plan_recipe': form_plan_recipe, 'comment': comment}
+        return render(request, 'new_plan.html', context=context)
 
 
 class PlanDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         plan = get_object_or_404(Plan, pk=id)
-        monday = RecipePlan.objects.monday(plan)
-        tuesday = RecipePlan.objects.tuesday(plan)
-        wednesday = RecipePlan.objects.wednesday(plan)
-        thursday = RecipePlan.objects.thursday(plan)
-        friday = RecipePlan.objects.friday(plan)
-        saturday = RecipePlan.objects.saturday(plan)
-        sunday = RecipePlan.objects.sunday(plan)
+        monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
         context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
                    'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday}
-        # plan_by_day = ()
-        # for day in DAYS:
-        #     day_plan = RecipePlan.objects.filter(plan=plan, day=day[0]).order_by('meal')
-        #     day_tuple = (day[1], day_plan)
-        #     plan_by_day = plan_by_day + day_tuple
-        # print(plan_by_day)
         return render(request, 'plan_detail.html', context=context)
     def post(self, request):
         if request.POST.get('query'):
@@ -676,6 +659,14 @@ class PlanDetailView(LoginRequiredMixin, View):
             recipes = Recipe.objects.search(query)
             return render(request, "recipes_list.html", {'recipes': recipes})
 
+
+class RemoveRecipePlanView(LoginRequiredMixin, View):
+    def get(self, request, plan_id, dish_id):
+        plan = get_object_or_404(Plan, pk=plan_id)
+        dish = get_object_or_404(RecipePlan, pk=dish_id)
+        dish.delete()
+        url = f'/plans/modify/{plan.id}'
+        return redirect(url)
 
 
 

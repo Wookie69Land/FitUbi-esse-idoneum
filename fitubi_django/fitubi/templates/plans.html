@@ -26,15 +26,17 @@
 
 <ol class="list-group list-group-numbered">
     {% for plan in plans %}
-  <li class="list-group-item d-flex justify-content-between align-items-start">
-    <div class="ms-2 me-auto">
-      <div class="fw-bold" >{{ plan.name }}</div>
-        {{ plan.description }}
-    </div>
-    <a href="{{ plan.get_absolute_url }}"><span class="badge bg-primary rounded-pill">
-        Details </span></a>
-  </li>
-        {% empty %}
+      <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+          <div class="fw-bold" >{{ plan.name }}</div>
+            {{ plan.description }}
+        </div>
+        <a href="{{ plan.get_absolute_url }}"><span class="badge bg-primary rounded-pill">
+            Details </span></a>
+        <a href="/plans/modify/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
+            Modify plan </span></a>
+      </li>
+    {% empty %}
         <h5>No plan was found with this search conditions.</h5>
     {% endfor %}
 </ol>

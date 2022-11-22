@@ -1,4 +1,4 @@
-from fitubi.models import RecipeIngredients, Recipe
+from fitubi.models import RecipeIngredients, RecipePlan
 import functools
 from django.shortcuts import render
 
@@ -156,3 +156,12 @@ def surprise(view):
     return wrapper
 
 
+def process_plan_week(plan):
+    monday = RecipePlan.objects.monday(plan)
+    tuesday = RecipePlan.objects.tuesday(plan)
+    wednesday = RecipePlan.objects.wednesday(plan)
+    thursday = RecipePlan.objects.thursday(plan)
+    friday = RecipePlan.objects.friday(plan)
+    saturday = RecipePlan.objects.saturday(plan)
+    sunday = RecipePlan.objects.sunday(plan)
+    return monday, tuesday, wednesday, thursday, friday, saturday, sunday

@@ -6,7 +6,7 @@
 
     <form method="post">
        {% csrf_token %}
-       <h3 class="mb-5">Plan:</h3>
+       <h3 class="mb-5">Plan: {{ plan }}</h3>
 
             <div class="form-outline mb-4">
               {{ form.as_p }}
@@ -25,6 +25,7 @@
 
     <div>
         <table>
+        {% if monday %}
             <tr>
                 <th>
                     Monday
@@ -32,12 +33,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in monday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if tuesday %}
             <tr>
                 <th>
                     Tuesday
@@ -45,12 +51,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in tuesday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if wednesday %}
             <tr>
                 <th>
                     Wednesday
@@ -58,12 +69,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in wednesday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if thursday %}
             <tr>
                 <th>
                     Thursday
@@ -71,12 +87,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in thursday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if friday %}
             <tr>
                 <th>
                     Friday
@@ -84,12 +105,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in friday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if saturday %}
             <tr>
                 <th>
                     Saturday
@@ -97,12 +123,17 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in saturday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
+        {% if sunday %}
             <tr>
                 <th>
                     Sunday
@@ -110,12 +141,16 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in sunday %}
-                        <p>{{ row.get_meal_display }}:</p>
+                        <p><strong>{{ row.get_meal_display }}:</strong></p>
                         <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <a href="/plans/remove/{{ plan.id }}/{{ row.id }}">
+                            <span class="badge bg-primary rounded-pill">
+                            Remove recipe </span></a>
                     {% endfor %}
                 </td>
                 </tbody>
             </tr>
+        {% endif %}
         </table>
     </div>
 
