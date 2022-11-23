@@ -774,6 +774,18 @@ class RemovePlanFromFavouritesView(LoginRequiredMixin, View):
         return redirect(url)
 
 
+class DeletePlanView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        plan = get_object_or_404(Plan, pk=id)
+        user = request.user
+        if plan.created_by == user:
+            plan.delete()
+            return redirect('plans')
+        else:
+            comment = "You can delete only plans created by yourself."
+            request.session['comment'] = comment
+            url = f'/plans/{plan.id}'
+            return redirect(url)
 
 
 
