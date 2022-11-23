@@ -534,14 +534,6 @@ class FridgeView(LoginRequiredMixin, View):
             count = ingredients.count()
             recipes_all = Recipe.objects.filter(ingredients__in=ingredients).distinct()
 
-            for recipe in recipes_all:
-                excluded_count = 0
-                for ingredient in recipe.ingredients.all():
-                    if ingredient not in ingredients:
-                        excluded_count += 1
-                        if excluded_count == 2:
-                            recipes_all = recipes_all.exclude(pk=recipe.id)
-
             if category:
                 recipes_all = recipes_all.filter(category=category)
             if type:
@@ -550,9 +542,15 @@ class FridgeView(LoginRequiredMixin, View):
             recipes = []
             recipes_one_missing = []
             for recipe in recipes_all:
-                if len(recipe.ingredients.all()) <= count:
+                excluded_count = 0
+                for ingredient in recipe.ingredients.all():
+                    if ingredient not in ingredients:
+                        excluded_count += 1
+                        if excluded_count > 1:
+                            break
+                if excluded_count == 0:
                     recipes.append(recipe)
-                elif len(recipe.ingredients.all()) == count + 1:
+                elif excluded_count == 1:
                     recipes_one_missing.append(recipe)
 
             return render(request, 'fridge.html', {'form': form,

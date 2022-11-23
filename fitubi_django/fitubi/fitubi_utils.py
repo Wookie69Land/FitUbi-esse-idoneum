@@ -180,3 +180,6 @@ def process_plan_week(plan):
     saturday = RecipePlan.objects.saturday(plan)
     sunday = RecipePlan.objects.sunday(plan)
     return monday, tuesday, wednesday, thursday, friday, saturday, sunday
+
+
+
