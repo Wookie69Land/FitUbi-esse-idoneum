@@ -331,24 +331,30 @@ class CreateModifiedRecipeView(LoginRequiredMixin, View):
             return render(request, "recipes_list.html", {'recipes': recipes})
 
         form = RecipeForm(request.POST)
+        recipe = get_object_or_404(Recipe, pk=id)
 
         if form.is_valid():
             name = form.cleaned_data.get('name')
             description = form.cleaned_data.get('description')
             category = form.cleaned_data.get('category')
             type = form.cleaned_data.get('type')
-            recipe = Recipe.objects.create(name=name, description=description,
+            new_recipe = Recipe.objects.create(name=name, description=description,
                                            category=category, type=type, created_by=request.user)
-            recipe.refresh_from_db()
+            new_recipe.refresh_from_db()
+
+            ingredients = RecipeIngredients.objects.filter(recipe=recipe)
+            for row in ingredients:
+                RecipeIngredients.objects.create(recipe=new_recipe, ingredient=row.ingredient,
+                                                 amount=row.amount)
 
             user = get_object_or_404(FitUbiUser, user=request.user)
-            UserRecipes.objects.create(user=user, recipe=recipe, operation=4)
+            UserRecipes.objects.create(user=user, recipe=new_recipe, operation=4)
 
-            url = f'/modify_ingredients/{recipe.id}'
+            url = f'/modify_ingredients/{new_recipe.id}'
             return redirect(url)
 
         recipe = get_object_or_404(Recipe, pk=id)
-        form = RecipeForm(instance=recipe)
+        form = RecipeForm(initial=model_to_dict(recipe, exclude=['id']))
         recipe_ingredients = RecipeIngredients.objects.filter(recipe=recipe)
         comment = 'Submit correct data. Remember that name must be unique.'
         return render(request, "new_recipe_form.html", {'recipe': recipe,
@@ -826,12 +832,17 @@ class AutomaticPlanDecisionView(LoginRequiredMixin, View):
 
 
 class AutomaticPlanView(LoginRequiredMixin, View):
-    def get(self, request):
+    def get(self, request, meals, goal, type):
         clean_comment(request)
         fit_user = get_object_or_404(FitUbiUser, user=request.user)
         daily_calories = calculate_bmr(fit_user)
+        user_meals = meals
+        user_goal = GOALS[goal]
+        user_diet = DIET_TYPE[type]
+
+
         name = f'FitUbi plan for {request.user}'
-        description = 'Random plan tailored for our user'
+        description = f'Random plan tailored for {request.user} to {goal}'
 
         if Plan.objects.filter(name=name).exists():
             get_object_or_404(Plan, name=name).delete()
@@ -841,4 +852,5 @@ class AutomaticPlanView(LoginRequiredMixin, View):
 
         url = f'/plans/{plan.id}'
         return redirect(url)
+
 
