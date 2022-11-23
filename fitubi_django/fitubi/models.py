@@ -7,33 +7,7 @@ from django.dispatch import receiver
 from multiselectfield import MultiSelectField
 from datetime import date
 
-
-UNIT = (
-    (1, 'kilogram'),
-    (2, 'liter'),
-    (3, 'cup'),
-    (4, 'pinch'),
-    (5, 'tablespoon'),
-    (6, 'teaspoon'),
-    (7, 'pint'),
-    (8, 'pound'),
-)
-
-FOODCAT = (
-    (1, 'other'),
-    (2, 'dairy and eggs'),
-    (3, 'vegetables'),
-    (4, 'fruits'),
-    (5, 'spices and herbs'),
-    (6, 'oils and fats'),
-    (7, 'flours and starches'),
-    (8, 'grains'),
-    (9, 'nuts and seeds'),
-    (10, 'meat'),
-    (11, 'legumes'),
-    (12, 'fishes and seafood'),
-    (13, 'pasta, rice and pulses'),
-)
+from choices import *
 
 
 class Ingredient(models.Model):
@@ -49,32 +23,6 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f'{self.name} in {self.get_unit_display()}'
-
-
-RECIPE_CATEGORY = (
-    (1, 'breakfast'),
-    (2, 'lunch'),
-    (3, 'beverage'),
-    (4, 'appetizer'),
-    (5, 'soup'),
-    (6, 'salad'),
-    (7, 'main dish'),
-    (8, 'side dish'),
-    (9, 'dessert'),
-    (10, 'snack'),
-    (11, 'baked-good'),
-    (12, 'holiday'),
-    (13, 'sauces and dips')
-)
-
-DIET_TYPE = (
-    (1, 'standard'),
-    (2, 'vegan'),
-    (3, 'vegetarian'),
-    (4, 'pescetarian'),
-    (5, 'keto'),
-    (6, 'carnivore'),
-)
 
 
 class RecipeManager(models.Manager):
@@ -138,28 +86,6 @@ class Plan(models.Model):
         return f'/plans/{self.id}/'
 
 
-DAYS = (
-    (1, 'Monday'),
-    (2, 'Tuesday'),
-    (3, 'Wednesday'),
-    (4, 'Thursday'),
-    (5, 'Friday'),
-    (6, 'Saturday'),
-    (7, 'Sunday'),
-)
-
-
-MEALS = (
-    (1, 'breakfast'),
-    (2, 'brunch'),
-    (3, 'snack 1'),
-    (4, 'lunch'),
-    (5, 'snack 2'),
-    (6, 'supper'),
-    (7, 'dinner'),
-)
-
-
 class RecipePlanManager(models.Manager):
     def monday(self, plan):
         return self.get_queryset().filter(plan=plan, day=1).order_by('meal')
@@ -192,21 +118,6 @@ class RecipePlan(models.Model):
     objects = RecipePlanManager()
 
 
-SEX = (
-    (1, 'man'),
-    (2, 'woman'),
-)
-
-
-ACTIVE_FACTOR = (
-    (1, "sedentary: little or no exercise, desk job"),
-    (2, "lightly active: exercise 1-3 times per week"),
-    (3, "moderately active: exercise 6-7 time per week"),
-    (4, "very active: hard exercise every day"),
-    (5, "extra active: training for marathon or triathlon")
-)
-
-
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
@@ -232,14 +143,6 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         FitUbiUser.objects.create(user=instance)
     instance.fitubiuser.save()
-
-
-OPERATIONS = (
-    (1, 'add to favourites'),
-    (2, 'modify'),
-    (3, 'delete'),
-    (4, 'create')
-)
 
 
 class UserRecipes(models.Model):
