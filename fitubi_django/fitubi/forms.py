@@ -62,9 +62,10 @@ class RecipeForm(ModelForm):
 
 
 class RecipeIngredientsForm(ModelForm):
+    ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all().order_by('name'))
     class Meta:
         model = RecipeIngredients
-        fields = ['ingredient', 'amount']
+        fields = ['amount']
     def __init__(self, *args, **kwargs):
         super(RecipeIngredientsForm, self).__init__(*args, **kwargs)
         self.fields['ingredient'].required = False
