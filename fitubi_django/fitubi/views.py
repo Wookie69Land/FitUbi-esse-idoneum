@@ -394,13 +394,16 @@ class UtilitiesView(View):
     def get(self, request):
         clean_comment(request)
         form = ConverterForm()
-        return render(request, 'utilities.html', {'form': form})
+        form_bmi = BmiForm()
+        return render(request, 'utilities.html', {'form': form,
+                                                  'form_bmi': form_bmi})
     def post(self, request):
         if request.POST.get('query'):
             query = request.POST.get('query')
             recipes = Recipe.objects.search(query)
             return render(request, "recipes_list.html", {'recipes': recipes})
 
+        form_bmi = BmiForm(request.POST)
         form = ConverterForm(request.POST)
         if form.is_valid():
             converter = int(form.cleaned_data.get('converter'))
@@ -410,11 +413,21 @@ class UtilitiesView(View):
                 initial = {'converter': converter, 'quantity': quantity}
                 form = ConverterForm(initial=initial)
                 return render(request, 'utilities.html', {'result': result,
-                                                          'form': form})
+                                                          'form': form,
+                                                          'form_bmi': form_bmi})
             if 'convert_save' in request.POST:
                 request.session['result'] = result
                 request.session['converter'] = converter
                 return redirect('recipes_list')
+
+        if form_bmi.is_valid():
+            height = form_bmi.cleaned_data.get('height')
+            weight = form_bmi.cleaned_data.get('weight')
+            bmi = weight / (height / 100) ** 2
+            bmi = round(bmi, 4)
+            return render(request, 'utilities.html', {'bmi': bmi,
+                                                      'form': form,
+                                                      'form_bmi': form_bmi})
 
 
 class ProfileView(LoginRequiredMixin, View):

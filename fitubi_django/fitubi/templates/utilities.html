@@ -8,13 +8,28 @@
        {% csrf_token %}
 
             <div class="form-outline mb-4">
-              {{ form.as_table }}
+              {{ form.as_p }}
               <strong> = {{ result }}</strong>
               <div>
                  <button class="btn btn-secondary btn-sm" type="submit" name="convert">
                      Convert </button>
                  <button class="btn btn-secondary btn-sm" type="submit" name="convert_save">
                      Convert and save </button>
+              </div>
+
+            </div>
+
+     </form>
+    <hr>
+    <form method="post">
+       {% csrf_token %}
+
+            <div class="form-outline mb-4">
+              {{ form_bmi.as_p }}
+              <strong> = {{ bmi }}</strong>
+              <div>
+                 <button class="btn btn-secondary btn-sm" type="submit" name="bmi">
+                     Count BMI </button>
               </div>
 
             </div>

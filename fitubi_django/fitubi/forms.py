@@ -106,6 +106,11 @@ class ConverterForm(forms.Form):
     quantity = forms.DecimalField(max_digits=10, decimal_places=2, step_size=0.1)
 
 
+class BmiForm(forms.Form):
+    height = forms.DecimalField(label="Height in centimeters", max_digits=5, decimal_places=1, step_size=0.1)
+    weight = forms.DecimalField(label="Weight in kilograms", max_digits=5, decimal_places=1, step_size=0.1)
+
+
 class FridgeForm(ModelForm):
     ingredients = forms.ModelMultipleChoiceField(queryset=Ingredient.objects.all().order_by('name'))
     class Meta:
