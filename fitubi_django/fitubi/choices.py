@@ -90,6 +90,14 @@ ACTIVE_FACTOR = (
 OPERATIONS = (
     (1, 'add to favourites'),
     (2, 'modify'),
-    (3, 'delete'),
-    (4, 'create')
+    (3, 'activate'),
+    (4, 'create'),
+)
+
+GOALS = (
+    (1, 'rapidly loose weight'),
+    (2, 'loose weight'),
+    (3, 'maintain weight'),
+    (4, 'gain weight'),
+    (5, 'rapidly gain weight')
 )

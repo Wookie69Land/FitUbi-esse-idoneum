@@ -803,5 +803,42 @@ class DeletePlanView(LoginRequiredMixin, View):
             return redirect(url)
 
 
+class AutomaticPlanDecisionView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = FitUbiPlanForm()
+        return render(request, 'plan_decision.html', {'form': form})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
+        form = FitUbiPlanForm(request.POST)
+        if form.is_valid():
+            meals = form.cleaned_data.get('meals')
+            goal = form.cleaned_data.get('goal')
+            type = form.cleaned_data.get('type')
+            url = '/fitubiplan/'
+            for choice in meals:
+                url += str(choice)
+            url += f'/{goal}/{type}/'
+            return redirect(url)
+
+
+class AutomaticPlanView(LoginRequiredMixin, View):
+    def get(self, request):
+        clean_comment(request)
+        fit_user = get_object_or_404(FitUbiUser, user=request.user)
+        daily_calories = calculate_bmr(fit_user)
+        name = f'FitUbi plan for {request.user}'
+        description = 'Random plan tailored for our user'
+
+        if Plan.objects.filter(name=name).exists():
+            get_object_or_404(Plan, name=name).delete()
+        plan = Plan.objects.create(name=name, description=description, created_by=request.user)
+
+        recipes = Recipe.objects.all()
+
+        url = f'/plans/{plan.id}'
+        return redirect(url)
 

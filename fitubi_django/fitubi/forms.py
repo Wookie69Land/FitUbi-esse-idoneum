@@ -2,8 +2,9 @@ from django import forms
 from django.forms import ModelForm
 from django.core.validators import ValidationError
 
-from .models import User, FitUbiUser, DIET_TYPE, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
+from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
 from fitubi.fitubi_utils import CONV_OPTIONS
+from .choices import *
 
 
 class UserForm(ModelForm):
@@ -122,3 +123,9 @@ class FridgeForm(ModelForm):
         super(FridgeForm, self).__init__(*args, **kwargs)
         self.fields['category'].required = False
         self.fields['type'].required = False
+
+
+class FitUbiPlanForm(forms.Form):
+    meals = forms.MultipleChoiceField(label="pick meals per day: ", choices=MEALS)
+    goal = forms.ChoiceField(choices=GOALS, required=False)
+    type = forms.ChoiceField(choices=DIET_TYPE, required=False)
