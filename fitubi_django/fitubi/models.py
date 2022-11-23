@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from multiselectfield import MultiSelectField
 from datetime import date
 
-from choices import *
+from .choices import *
 
 
 class Ingredient(models.Model):
