@@ -13,14 +13,18 @@
       </tr>
       <tr>
           <td>
-          <ol></ol>
+          <ol>
           {% for row in favourite_recipes %}
               <li><a href="/recipe/{{ row.recipe.id }}">{{ row.recipe }}</a></li>
           {% endfor %}
           </ol>
           </td>
           <td>
-
+          <ol>
+          {% for row in favourite_plans %}
+              <li><a href="/plans/{{ row.plan.id }}">{{ row.plan }}</a></li>
+          {% endfor %}
+          </ol>
           </td>
       </tr>
     </table>

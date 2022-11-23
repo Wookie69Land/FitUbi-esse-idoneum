@@ -486,8 +486,9 @@ class FavouritesView(LoginRequiredMixin, View):
     def get(self, request):
         user = get_object_or_404(FitUbiUser, user=request.user)
         favourite_recipes = UserRecipes.objects.filter(user=user, operation=1)
-        #favourite_plans = UserPlans.objects.filter(user=user, operation=1)
-        return render(request, 'favourites.html', {'favourite_recipes': favourite_recipes})
+        favourite_plans = UserPlans.objects.filter(user=user, operation=1)
+        return render(request, 'favourites.html', {'favourite_recipes': favourite_recipes,
+                                                   'favourite_plans': favourite_plans})
     def post(self, request):
         if request.POST.get('query'):
             query = request.POST.get('query')
@@ -650,8 +651,16 @@ class PlanDetailView(LoginRequiredMixin, View):
     def get(self, request, id):
         plan = get_object_or_404(Plan, pk=id)
         monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
+
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        if UserPlans.objects.filter(user=user, plan=plan, operation=1).exists():
+            favourite_mark = True
+        else:
+            favourite_mark = False
+
         context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
-                   'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday}
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday,
+                   'favourite_mark': favourite_mark}
         return render(request, 'plan_detail.html', context=context)
     def post(self, request):
         if request.POST.get('query'):
@@ -728,6 +737,42 @@ class PlanNewModifiedView(LoginRequiredMixin, View):
                    'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday,
                    'form': form, 'form_plan_recipe': form_plan_recipe, 'comment': comment}
         return render(request, 'new_plan.html', context=context)
+
+
+class AddPlanToFavouritesView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        clean_comment(request)
+        plan = get_object_or_404(Plan, pk=id)
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        if UserPlans.objects.filter(user=user, plan=plan, operation=1).exists():
+            comment = 'Plan already in favourites.'
+            request.session['comment'] = comment
+            url = f'/plans/{plan.id}'
+            return redirect(url)
+
+        UserPlans.objects.create(user=user, plan=plan, operation=1)
+        comment = 'Added plan to favourites.'
+        request.session['comment'] = comment
+        url = f'/plans/{plan.id}'
+        return redirect(url)
+
+
+class RemovePlanFromFavouritesView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        clean_comment(request)
+        plan = get_object_or_404(Plan, pk=id)
+        user = get_object_or_404(FitUbiUser, user=request.user)
+        if UserPlans.objects.filter(user=user, plan=plan, operation=1).exists():
+            UserPlans.objects.filter(user=user, plan=plan, operation=1).delete()
+            comment = 'Removed plan from favourites.'
+            request.session['comment'] = comment
+            url = f'/plans/{plan.id}'
+            return redirect(url)
+        comment = 'Plan not in favourites.'
+        request.session['comment'] = comment
+        url = f'/plans/{plan.id}'
+        return redirect(url)
+
 
 
 
