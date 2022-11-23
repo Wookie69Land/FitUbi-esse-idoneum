@@ -669,4 +669,67 @@ class RemoveRecipePlanView(LoginRequiredMixin, View):
         return redirect(url)
 
 
+class PlanNewModifiedView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        clean_comment(request)
+        plan = get_object_or_404(Plan, pk=id)
+        form = PlanForm(instance=plan)
+        form_plan_recipe = RecipePlanForm()
+
+        monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
+        context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday,
+                   'sunday': sunday, 'form': form, 'form_plan_recipe': form_plan_recipe}
+        return render(request, 'new_plan.html', context=context)
+    def post(self, request, id):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
+        plan = get_object_or_404(Plan, pk=id)
+        form = PlanForm(request.POST, instance=plan)
+        form_plan_recipe = RecipePlanForm(request.POST)
+
+        if form.is_valid() and form_plan_recipe.is_valid():
+            name = form.cleaned_data.get('name')
+            description = form.cleaned_data.get('description')
+            new_plan = Plan.objects.create(name=name,
+                                       description=description,
+                                       created_by=request.user)
+            new_plan.refresh_from_db()
+
+            plan_dishes = RecipePlan.objects.filter(plan=plan)
+            for dish in plan_dishes:
+                day = dish.day
+                meal = dish.meal
+                recipe = dish.recipe
+                RecipePlan.objects.create(day=day, meal=meal, recipe=recipe, plan=new_plan)
+
+            day = form_plan_recipe.cleaned_data.get('day')
+            meal = form_plan_recipe.cleaned_data.get('meal')
+            recipe = form_plan_recipe.cleaned_data.get('recipe')
+            RecipePlan.objects.create(day=day, meal=meal, recipe=recipe, plan=new_plan)
+            new_plan.refresh_from_db()
+
+            user = get_object_or_404(FitUbiUser, user=request.user)
+            UserPlans.objects.create(user=user, plan=new_plan, operation=4)
+
+            if "save" in request.POST:
+                return redirect('profile')
+            url = f'/plans/modify/{new_plan.id}'
+            return redirect(url)
+
+        form = PlanForm(instance=plan)
+        form_plan_recipe = RecipePlanForm()
+        comment = 'Submit correct data. Remember that name must be unique.'
+        monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
+        context = {'plan': plan, 'monday': monday, 'tuesday': tuesday, 'wednesday': wednesday,
+                   'thursday': thursday, 'friday': friday, 'saturday': saturday, 'sunday': sunday,
+                   'form': form, 'form_plan_recipe': form_plan_recipe, 'comment': comment}
+        return render(request, 'new_plan.html', context=context)
+
+
+
+
 

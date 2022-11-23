@@ -4,15 +4,15 @@
     {% if comment %}<p style="color: darkred">{{ comment }}</p>{% endif %}
 
     {% if user.is_authenticated %}
-    <a href="plans/modify/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/plans/modify/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Modify </span></a>
-    <a href="/delete_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/delete_plan/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Delete </span></a>
-    <a href="/add_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/add_plan/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Add to favourites </span></a>
-    <a href="/remove_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/remove_plan/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Remove from favourites </span></a>
-    <a href="/new_modified_plan/{{ recipe.id }}"><span class="badge bg-primary rounded-pill">
+    <a href="/new_modified_plan/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Create new plan based on this one </span></a>
     {% endif %}
 
@@ -69,7 +69,7 @@
     <div>
         <table>
             <tr>
-                <th>
+                <th class="table-info">
                     Monday
                 </th>
                 <tbody class="table-group-divider">
@@ -82,7 +82,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Tuesday
                 </th>
                 <tbody class="table-group-divider">
@@ -95,7 +95,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Wednesday
                 </th>
                 <tbody class="table-group-divider">
@@ -108,7 +108,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Thursday
                 </th>
                 <tbody class="table-group-divider">
@@ -121,7 +121,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Friday
                 </th>
                 <tbody class="table-group-divider">
@@ -134,7 +134,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Saturday
                 </th>
                 <tbody class="table-group-divider">
@@ -147,7 +147,7 @@
                 </tbody>
             </tr>
             <tr>
-                <th>
+                <th class="table-info">
                     Sunday
                 </th>
                 <tbody class="table-group-divider">
