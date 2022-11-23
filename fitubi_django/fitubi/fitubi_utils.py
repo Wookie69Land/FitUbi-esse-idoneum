@@ -1,5 +1,7 @@
 from fitubi.models import RecipeIngredients, RecipePlan
 import functools
+import collections
+
 from django.shortcuts import render
 
 
@@ -89,6 +91,19 @@ def macros_total(recipe):
         macros['fats'] += row.ingredient.fats * row.amount
         macros['proteins'] += row.ingredient.proteins * row.amount
         macros['calories'] += row.ingredient.calories * row.amount
+    return macros
+
+
+def plan_macros(plan):
+    macros = []
+    counter = collections.Counter()
+    for recipe in plan.recipes.all():
+        macros.append(macros_total(recipe))
+    for macro in macros:
+        counter.update(macro)
+    macros = dict(counter)
+    for key in macros:
+        macros[key] = round(macros[key] / 7, 2)
     return macros
 
 

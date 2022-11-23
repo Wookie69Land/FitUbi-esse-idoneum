@@ -5,7 +5,6 @@ from django.views import View
 from django.forms.models import model_to_dict
 
 import random
-import collections
 
 from fitubi.models import *
 from fitubi.forms import *
@@ -653,15 +652,7 @@ class PlanDetailView(LoginRequiredMixin, View):
         plan = get_object_or_404(Plan, pk=id)
         monday, tuesday, wednesday, thursday, friday, saturday, sunday = process_plan_week(plan)
 
-        macros = []
-        counter = collections.Counter()
-        for recipe in plan.recipes.all():
-            macros.append(macros_total(recipe))
-        for macro in macros:
-            counter.update(macro)
-        macros = dict(counter)
-        for key in macros:
-            macros[key] = round(macros[key] / 7, 2)
+        macros = plan_macros(plan)
 
         user = get_object_or_404(FitUbiUser, user=request.user)
         if UserPlans.objects.filter(user=user, plan=plan, operation=1).exists():
