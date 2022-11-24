@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.forms.models import model_to_dict
+from django.core.paginator import Paginator
 
 import random
 
@@ -97,6 +98,9 @@ class RecipesListView(View):
         clean_comment(request)
         recipes = Recipe.objects.all().order_by('-updated')
         form = RecipeSearchForm()
+        paginator = Paginator(recipes, 10)
+        page = request.GET.get('page')
+        recipes = paginator.get_page(page)
         return render(request, "recipes_list.html", {'recipes': recipes,
                                                      'form': form})
     def post(self, request):
