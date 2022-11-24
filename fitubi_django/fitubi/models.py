@@ -159,6 +159,7 @@ class UserPlans(models.Model):
     operation = models.SmallIntegerField(choices=OPERATIONS)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    activated = models.BooleanField(default=False)
 
 
 class ArticleManager(models.Manager):
