@@ -439,6 +439,7 @@ class UtilitiesView(View):
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
+        coderslab_playsound(request)
         bmi = calculate_bmi(user.fitubiuser)
         bmr = calculate_bmr(user.fitubiuser)
         bmi_comment = process_bmi(bmi)

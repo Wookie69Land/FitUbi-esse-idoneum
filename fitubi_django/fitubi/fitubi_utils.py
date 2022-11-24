@@ -1,8 +1,7 @@
 from fitubi.models import RecipeIngredients, RecipePlan
 import functools
 import collections
-
-from django.shortcuts import render
+from playsound import playsound
 
 
 def kilo_to_pound(amount):
@@ -158,6 +157,13 @@ def coderslab_check(request):
         if 'coderslab' in request.user.email:
             coders_surprise = "Welcome member of the CodersLab team. Thank you all for your invaluable help."
             request.session['surprise'] = coders_surprise
+
+
+def coderslab_playsound(request):
+    if request.user.is_authenticated:
+        if 'coderslab' in request.user.email:
+            playsound('/home/lukasland/Desktop/other_code/FitUbi2/FitUbi-esse-idoneum/fitubi_django/fitubi/static/sounds/rocket.wav')
+
 
 
 def surprise(view):
