@@ -123,6 +123,9 @@ class RecipesListView(View):
                 type = form.cleaned_data.get('type')
                 recipes = recipes.filter(type=type)
         form = RecipeSearchForm()
+        paginator = Paginator(recipes, 10)
+        page = request.GET.get('page')
+        recipes = paginator.get_page(page)
         return render(request, "recipes_list.html", {'recipes': recipes,
                                                      'form': form})
 
@@ -567,6 +570,9 @@ class PlansView(LoginRequiredMixin, View):
     def get(self, request):
         clean_comment(request)
         plans = Plan.objects.all().order_by('-created')
+        paginator = Paginator(plans, 5)
+        page = request.GET.get('page')
+        plans = paginator.get_page(page)
         return render(request, 'plans.html', {'plans': plans})
     def post(self, request):
         if request.POST.get('query'):
@@ -579,6 +585,9 @@ class PlansView(LoginRequiredMixin, View):
             plans = Plan.objects.search(query)
         else:
             plans = Plan.objects.all()
+        paginator = Paginator(plans, 5)
+        page = request.GET.get('page')
+        plans = paginator.get_page(page)
         return render(request, "plans.html", {'plans': plans})
 
 
