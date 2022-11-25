@@ -128,3 +128,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/fitubi_django/fitubi/migrations/0001_initial.py
+/fitubi_django/fitubi/migrations/0002_plan_created_by.py
+/fitubi_django/fitubi/migrations/0003_alter_recipeplan_day.py
+/fitubi_django/fitubi/migrations/0004_alter_plan_name.py
+/fitubi_django/fitubi/migrations/0005_alter_userplans_operation_and_more.py
+/fitubi_django/fitubi/migrations/0006_userplans_activated.py
