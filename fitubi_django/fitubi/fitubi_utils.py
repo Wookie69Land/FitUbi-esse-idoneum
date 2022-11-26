@@ -1,7 +1,47 @@
-from fitubi.models import RecipeIngredients, RecipePlan
+from fitubi.models import RecipeIngredients, RecipePlan, Recipe
 import functools
 import collections
 from playsound import playsound
+
+
+def kilo_to_stone(amount):
+    amount_s = amount / 6.35
+    return round(amount_s, 4)
+
+
+def stone_to_kilo(amount):
+    amount_k = amount * 6.35
+    return round(amount_k, 4)
+
+
+def liter_to_gallon(amount):
+    amount_g = amount / 3.785
+    return round(amount_g, 4)
+
+
+def gallon_to_liter(amount):
+    amount_l = amount * 3.785
+    return round(amount_l, 4)
+
+
+def milliliter_to_pint(amount):
+    amount_p = amount / 568.3
+    return round(amount_p, 4)
+
+
+def pint_to_milliliter(amount):
+    amount_m = amount * 568.3
+    return round(amount_m, 4)
+
+
+def gram_to_pound(amount):
+    amount_p = amount / 453.6
+    return round(amount_p, 4)
+
+
+def pound_to_gram(amount):
+    amount_g = amount * 453.6
+    return round(amount_g, 4)
 
 
 def kilo_to_pound(amount):
@@ -188,4 +228,20 @@ def process_plan_week(plan):
     return monday, tuesday, wednesday, thursday, friday, saturday, sunday
 
 
+MEALS = (
+    (1, 'breakfast'),
+    (2, 'brunch'),
+    (3, 'snack 1'),
+    (4, 'lunch'),
+    (5, 'snack 2'),
+    (6, 'supper'),
+    (7, 'dinner'),
+)
+
+
+def check_dish_type(recipe: Recipe, meal: int):
+    breakfast_choices = [1, 4, 5, 6, 8, 9, 10, 11, 12]
+    brunch_choices = [3, 4, 5, 6, 8, 11, 12]
+    if meal in recipe.category:
+        pass
 

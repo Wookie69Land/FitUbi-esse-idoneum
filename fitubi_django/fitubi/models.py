@@ -166,7 +166,8 @@ class ArticleManager(models.Manager):
     def search(self, query=None):
         if query is None or query == "":
             return self.get_queryset().none()
-        conditions = Q(title__icontains=query) | Q(content__icontains=query) | Q(author__icontains=query)
+        conditions = Q(title__icontains=query) | Q(content__icontains=query) | \
+                     Q(author__icontains=query) | Q(reference__icontains=query)
         return self.get_queryset().filter(conditions)
 
 
@@ -188,4 +189,7 @@ class Article(models.Model):
         return f'/articles/{self.slug}/'
 
 
-
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    sound = models.BooleanField(default=True)
+    metric_system = models.SmallIntegerField(choices=UNIT_SYSTEM)

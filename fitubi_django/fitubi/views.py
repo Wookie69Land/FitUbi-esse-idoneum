@@ -119,7 +119,7 @@ class RecipesListView(View):
             if form.cleaned_data.get('category'):
                 category = form.cleaned_data.get('category')
                 recipes = recipes.filter(category=category)
-            if form.cleaned_data.get('type'):
+            if form.cleaned_data.get('type') and form.cleaned_data.get('type') != 1:
                 type = form.cleaned_data.get('type')
                 recipes = recipes.filter(type=type)
         form = RecipeSearchForm()
@@ -891,8 +891,8 @@ class AutomaticPlanDecisionView(LoginRequiredMixin, View):
             type = form.cleaned_data.get('type')
             url = '/fitubiplan/'
             for choice in meals:
-                url += str(choice)
-            url += f'/{goal}/{type}/'
+                url += choice
+            url += f'/{goal}/{type}'
             return redirect(url)
 
 
@@ -900,20 +900,40 @@ class AutomaticPlanView(LoginRequiredMixin, View):
     def get(self, request, meals, goal, type):
         clean_comment(request)
         fit_user = get_object_or_404(FitUbiUser, user=request.user)
+        meals = [int(m) for m in str(meals)]
         daily_calories = calculate_bmr(fit_user)
-        user_meals = meals
-        user_goal = GOALS[goal]
-        user_diet = DIET_TYPE[type]
+        calories_limit = daily_calories
+        if goal == 1:
+            calories_limit = daily_calories * 0.8
+        elif goal == 2:
+            calories_limit = daily_calories * 0.9
+        elif goal == 4:
+            calories_limit = daily_calories * 1.1
+        elif goal == 5:
+            calories_limit = daily_calories * 1.2
+        calories_dish_limit = calories_limit / len(meals)
 
+        goal_description = GOALS[goal-1][1]
 
         name = f'FitUbi plan for {request.user}'
-        description = f'Random plan tailored for {request.user} to {goal}'
+        description = f'Random plan tailored for {request.user} to {goal_description}'
 
         if Plan.objects.filter(name=name).exists():
             get_object_or_404(Plan, name=name).delete()
         plan = Plan.objects.create(name=name, description=description, created_by=request.user)
 
-        recipes = Recipe.objects.all()
+        if type != 1:
+            recipes = Recipe.objects.filter(type=type).order_by('?')
+        else:
+            recipes = Recipe.objects.all().order_by('?')
+
+        for day in DAYS:
+            for meal in meals:
+                for recipe in recipes:
+                    if recipe not in plan.recipes.all():
+                        if calories_dish_limit * 0.9 < macros_total(recipe)['calories'] <= calories_dish_limit * 1.1:
+                            RecipePlan.objects.create(day=day[0], meal=meal, recipe=recipe, plan=plan)
+                            break
 
         url = f'/plans/{plan.id}'
         return redirect(url)

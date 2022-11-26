@@ -6,6 +6,17 @@ UNIT = (
     (4, 'pinch'),
     (5, 'tablespoon'),
     (6, 'teaspoon'),
+    (7, 'milliliter'),
+    (8, 'gram'),
+)
+
+UNIT_IMPERIAL = (
+    (1, 'stone'),
+    (2, 'gallon'),
+    (3, 'cup'),
+    (4, 'pinch'),
+    (5, 'tablespoon'),
+    (6, 'teaspoon'),
     (7, 'pint'),
     (8, 'pound'),
 )
@@ -95,9 +106,14 @@ OPERATIONS = (
 )
 
 GOALS = (
-    (1, 'rapidly loose weight'),
-    (2, 'loose weight'),
+    (1, 'rapidly lose weight'),
+    (2, 'lose weight'),
     (3, 'maintain weight'),
     (4, 'gain weight'),
     (5, 'rapidly gain weight')
+)
+
+UNIT_SYSTEM = (
+    (1, 'metric'),
+    (2, 'imperial')
 )
