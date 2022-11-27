@@ -11,20 +11,18 @@ def create_name():
     first_name = fake.first_name()
     last_name = fake.last_name()
     username = first_name + last_name + str(random.randint(1, 666))
-    return username, first_name, last_name
+    return username
 
 
 def create_users():
     for person in range(0, 10):
-        username, first_name, last_name = create_name()
+        username = create_name()
         fake = Factory.create("en")
         email = fake.email()
         password = "fakefake"
         person = User.objects.create_user(username=username,
-                                    first_name=first_name,
-                                    last_name=last_name,
-                                    email=email,
-                                    password=password)
+                                          email=email,
+                                          password=password)
         person.fitubiuser.birth_date = fake.date()
         person.fitubiuser.food_preference = random.choice(DIET_TYPE)[0]
         person.fitubiuser.height = random.randint(150, 220)
@@ -60,7 +58,7 @@ def create_recipe():
         description = fake.dish_description()
         category = random.choice(RECIPE_CATEGORY)[0]
         recipe = Recipe.objects.create(name=name, description=description,
-                                       category=category)
+                                       category=category, created_by=User.objects.get(pk=1))
 
 
 def create_ingredients_for_recipe():
@@ -68,7 +66,7 @@ def create_ingredients_for_recipe():
     for recipe in Recipe.objects.all():
         for i in range(1, 5):
             ingredient = random.choice(ingredients)
-            amount = random.randint(1, 500)
+            amount = random.randint(1, 100)
             RecipeIngredients.objects.create(recipe=recipe,
                                              ingredient=ingredient,
                                              amount=amount)
