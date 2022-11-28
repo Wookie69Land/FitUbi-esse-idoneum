@@ -883,6 +883,7 @@ class ActivatePlanView(LoginRequiredMixin, View):
             active_plan.save()
             return redirect('profile')
         UserActivatedPlan.objects.create(user=user, plan=plan)
+        UserRecipes.objects.create(user=user, plan=plan, operation=3)
         return redirect('profile')
 
 
