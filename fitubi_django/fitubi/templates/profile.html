@@ -80,6 +80,15 @@
                     {{ user.fitubiuser.get_activity_display }}
                 </td>
             </tr>
+            <tr>
+                <th>
+                    Currently active plan:
+                </th>
+                <td>
+                    {{ user.fitubiuser.useractivatedplan.plan }},
+                    calories per day: {{ user.fitubiuser.useractivatedplan.plan.calories }}
+                </td>
+            </tr>
         </table>
     </div>
     <table class="table">

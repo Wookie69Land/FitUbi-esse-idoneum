@@ -92,6 +92,12 @@ class Plan(models.Model):
     def get_absolute_url(self):
         return f'/plans/{self.id}/'
 
+    def calories(self):
+        calories = 0
+        for recipe in self.recipes.all():
+            calories += recipe.calories()
+        return round(calories / 7)
+
 
 class RecipePlanManager(models.Manager):
     def monday(self, plan):
