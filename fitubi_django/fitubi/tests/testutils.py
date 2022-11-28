@@ -54,13 +54,17 @@ def create_fitubiuser():
 
 
 def create_fake_recipe():
+    user = create_user()
     fake = Faker()
     fake.add_provider(FoodProvider)
     name = fake.dish()
     description = fake.dish_description()
     category = random.choice(RECIPE_CATEGORY)[0]
+    type = str(RECIPE_CATEGORY[1][0])
     recipe = Recipe.objects.create(name=name, description=description,
-                                   category=category, created_by=User.objects.get(pk=1))
+                                   category=category, created_by=user,
+                                   type=type)
+    return recipe
 
 
 def find_person_by_name(name):

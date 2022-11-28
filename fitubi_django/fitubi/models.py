@@ -38,7 +38,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredients')
     description = models.TextField()
     category = models.SmallIntegerField(choices=RECIPE_CATEGORY)
-    type = MultiSelectField(choices=DIET_TYPE, max_choices=4, max_length=4)
+    type = MultiSelectField(choices=DIET_TYPE, max_choices=4, max_length=8)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -121,7 +121,7 @@ class RecipePlan(models.Model):
 class FitUbiUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField(null=True)
-    food_preference = MultiSelectField(choices=DIET_TYPE, max_length=6, null=True)
+    food_preference = MultiSelectField(choices=DIET_TYPE, max_length=12, null=True)
     height = models.SmallIntegerField(null=True)
     weight = models.SmallIntegerField(null=True)
     sex = models.SmallIntegerField(choices=SEX, null=True)

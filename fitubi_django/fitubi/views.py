@@ -346,7 +346,7 @@ class CreateModifiedRecipeView(LoginRequiredMixin, View):
             category = form.cleaned_data.get('category')
             type = form.cleaned_data.get('type')
             new_recipe = Recipe.objects.create(name=name, description=description,
-                                           category=category, type=type, created_by=request.user)
+                                               category=category, type=type, created_by=request.user)
             new_recipe.refresh_from_db()
 
             ingredients = RecipeIngredients.objects.filter(recipe=recipe)
