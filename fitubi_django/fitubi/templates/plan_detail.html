@@ -14,6 +14,9 @@
         Remove from favourites </span></a>
     <a href="/new_modified_plan/{{ plan.id }}"><span class="badge bg-primary rounded-pill">
         Create new plan based on this one </span></a>
+    <button type="button" class="btn btn-success"
+            onclick="window.location.href='/activate/{{ plan.id }}';">Activate</button>
+
     {% endif %}
 
     <table class="table borderless">
@@ -75,8 +78,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in monday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -88,8 +93,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in tuesday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -101,8 +108,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in wednesday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -114,8 +123,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in thursday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -127,8 +138,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in friday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -140,8 +153,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in saturday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>
@@ -153,8 +168,10 @@
                 <tbody class="table-group-divider">
                 <td>
                     {% for row in sunday %}
-                        <p>{{ row.get_meal_display }}:</p>
-                        <p>{{ row.recipe }} - {{ row.recipe.description }}</p>
+                        <p class="fst-italic">{{ row.get_meal_display }}:</p>
+                        <p><a href="{{row.recipe.get_absolute_url}}">{{ row.recipe }},</a>
+                            calories: {{ row.recipe.calories }}</p>
+                        <p>{{ row.recipe.description }}</p>
                     {% endfor %}
                 </td>
                 </tbody>

@@ -51,6 +51,13 @@ class Recipe(models.Model):
     def get_absolute_url(self):
         return f'/recipe/{self.id}/'
 
+    def calories(self):
+        calories = 0
+        ingredients = RecipeIngredients.objects.filter(recipe=self)
+        for row in ingredients:
+            calories += row.ingredient.calories * row.amount
+        return calories
+
 
 class RecipeIngredients(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -126,8 +133,8 @@ class FitUbiUser(models.Model):
     weight = models.SmallIntegerField(null=True)
     sex = models.SmallIntegerField(choices=SEX, null=True)
     activity = models.SmallIntegerField(choices=ACTIVE_FACTOR, null=True)
-    favourite_recipes = models.ManyToManyField(Recipe, through='UserRecipes')
-    favourite_plans = models.ManyToManyField(Plan, through='UserPlans')
+    recipes = models.ManyToManyField(Recipe, through='UserRecipes')
+    plans = models.ManyToManyField(Plan, through='UserPlans')
 
     def __str__(self):
         return self.user.username
@@ -159,7 +166,6 @@ class UserPlans(models.Model):
     operation = models.SmallIntegerField(choices=OPERATIONS)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    activated = models.BooleanField(default=False)
 
 
 class ArticleManager(models.Manager):
@@ -193,3 +199,8 @@ class UserSettings(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     sound = models.BooleanField(default=True)
     metric_system = models.SmallIntegerField(choices=UNIT_SYSTEM)
+
+
+class UserActivatedPlan(models.Model):
+    user = models.OneToOneField(FitUbiUser, on_delete=models.CASCADE)
+    plan = models.OneToOneField(Plan, on_delete=models.CASCADE)

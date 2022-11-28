@@ -228,20 +228,25 @@ def process_plan_week(plan):
     return monday, tuesday, wednesday, thursday, friday, saturday, sunday
 
 
-MEALS = (
-    (1, 'breakfast'),
-    (2, 'brunch'),
-    (3, 'snack 1'),
-    (4, 'lunch'),
-    (5, 'snack 2'),
-    (6, 'supper'),
-    (7, 'dinner'),
-)
-
-
 def check_dish_type(recipe: Recipe, meal: int):
     breakfast_choices = [1, 4, 5, 6, 8, 9, 10, 11, 12]
     brunch_choices = [3, 4, 5, 6, 8, 11, 12]
-    if meal in recipe.category:
-        pass
+    snack_choices = [4, 9, 10, 11, 12]
+    lunch_choices = [2, 5, 6, 8, 12]
+    supper_choices = [4, 6, 8, 10]
+    dinner_choices = [5, 6, 8, 10, 12]
+    if meal == 1 and recipe.category in breakfast_choices:
+        return True
+    elif meal == 2 and recipe.category in brunch_choices:
+        return True
+    elif (meal == 3 or meal == 5) and recipe.category in snack_choices:
+        return True
+    elif meal == 4 and recipe.category in lunch_choices:
+        return True
+    elif meal == 5 and recipe.category in supper_choices:
+        return True
+    elif meal == 6 and recipe.category in dinner_choices:
+        return True
+    else:
+        return False
 

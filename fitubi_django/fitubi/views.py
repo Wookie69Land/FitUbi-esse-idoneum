@@ -873,6 +873,18 @@ class ModifyRecipePlanView(LoginRequiredMixin, View):
         return render(request, 'new_plan.html', context=context)
 
 
+class ActivatePlanView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        plan = get_object_or_404(Plan, pk=id)
+        user = request.user.fitubiuser
+        if UserActivatedPlan.objects.filter(user=user).exists():
+            active_plan = UserActivatedPlan.objects.get(user=user)
+            active_plan.plan = plan
+            active_plan.save()
+            return redirect('profile')
+        UserActivatedPlan.objects.create(user=user, plan=plan)
+        return redirect('profile')
+
 
 class AutomaticPlanDecisionView(LoginRequiredMixin, View):
     def get(self, request):
@@ -931,7 +943,8 @@ class AutomaticPlanView(LoginRequiredMixin, View):
             for meal in meals:
                 for recipe in recipes:
                     if recipe not in plan.recipes.all():
-                        if calories_dish_limit * 0.9 < macros_total(recipe)['calories'] <= calories_dish_limit * 1.1:
+                        if calories_dish_limit * 0.9 < macros_total(recipe)['calories'] <= calories_dish_limit * 1.1 \
+                                and check_dish_type(recipe, meal) == True:
                             RecipePlan.objects.create(day=day[0], meal=meal, recipe=recipe, plan=plan)
                             break
 

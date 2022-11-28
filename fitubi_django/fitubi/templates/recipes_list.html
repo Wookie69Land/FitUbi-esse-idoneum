@@ -32,7 +32,7 @@
         {% for recipe in recipes %}
       <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="ms-2 me-auto">
-          <div class="fw-bold" >{{ recipe.name }}</div>
+          <div class="fw-bold" >{{ recipe.name }}, calories: {{ recipe.calories }}</div>
             {{ recipe.description }}
         </div>
         <a href="{{ recipe.get_absolute_url }}"><span class="badge bg-primary rounded-pill">
