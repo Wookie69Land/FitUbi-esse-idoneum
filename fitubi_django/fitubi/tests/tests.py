@@ -1,6 +1,7 @@
 import pytest
 
-#from django.shortcuts import reverse
+from django.shortcuts import reverse
+from django.test import client
 
 from .testutils import *
 from fitubi.choices import DIET_TYPE
@@ -40,8 +41,26 @@ def test_update_multiselectfield():
     assert types == '245'
     assert length6 == 3
 
+@pytest.mark.django_db
+def test_fridge_view(client, set_up):
+    user = User.objects.all().first()
+    client.login(username=user.username, password='fakefake')
+    url = reverse('fridge')
+    response = client.get(url)
+    assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_fridge_one_missing(client, set_up):
+    user = User.objects.all().first()
+    client.login(username=user.username, password='fakefake')
+    url = reverse('fridge')
+    ingredients = create_fake_fridge()
+    data = {
+        'ingredients': ingredients,
+    }
+    response = client.post(url, data=data)
+    assert response.status_code == 400
 
 # @pytest.mark.django_db
 # def test_get_movie_list(client, set_up):

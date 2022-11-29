@@ -243,9 +243,9 @@ def check_dish_type(recipe: Recipe, meal: int):
         return True
     elif meal == 4 and recipe.category in lunch_choices:
         return True
-    elif meal == 5 and recipe.category in supper_choices:
+    elif meal == 6 and recipe.category in supper_choices:
         return True
-    elif meal == 6 and recipe.category in dinner_choices:
+    elif meal == 7 and recipe.category in dinner_choices:
         return True
     else:
         return False

@@ -539,7 +539,6 @@ class FridgeView(LoginRequiredMixin, View):
             category = form.cleaned_data.get('category')
             type = form.cleaned_data.get('type')
 
-            count = ingredients.count()
             recipes_all = Recipe.objects.filter(ingredients__in=ingredients).distinct()
 
             if category:

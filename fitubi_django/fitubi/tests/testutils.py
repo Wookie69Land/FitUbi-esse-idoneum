@@ -4,7 +4,7 @@ from faker_food import FoodProvider
 
 import random
 
-from fitubi.models import User, FitUbiUser, Ingredient, Recipe, Plan
+from fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients
 from fitubi.choices import *
 
 
@@ -53,17 +53,45 @@ def create_fitubiuser():
     return person
 
 
+def create_fake_ingredient():
+    fake = Faker()
+    fake.add_provider(FoodProvider)
+    name = fake.ingredient()
+    while Ingredient.objects.filter(name=name).exists():
+        name = fake.ingredient()
+    unit = random.choice(UNIT)[0]
+    carbs = random.randint(1, 10)
+    fats = random.randint(1, 10)
+    proteins = random.randint(1, 10)
+    calories = random.randint(1, 10)
+    category = random.choice(FOODCAT)[0]
+    specials = fake.text()
+    dangers = fake.text()
+    ingredient = Ingredient.objects.create(name=name, unit=unit, carbs=carbs,
+                                           fats=fats, proteins=proteins,
+                                           calories=calories, category=category,
+                                           specials=specials, dangers=dangers)
+    return ingredient
+
+
 def create_fake_recipe():
     user = create_user()
     fake = Faker()
     fake.add_provider(FoodProvider)
     name = fake.dish()
+    while Recipe.objects.filter(name=name).exists():
+        name = fake.dish()
     description = fake.dish_description()
     category = random.choice(RECIPE_CATEGORY)[0]
     type = str(RECIPE_CATEGORY[1][0])
     recipe = Recipe.objects.create(name=name, description=description,
                                    category=category, created_by=user,
                                    type=type)
+    i = random.randint(2, 5)
+    for _ in range(1, i):
+        ingredient = create_fake_ingredient()
+        amount = random.randint(1, 100)
+        RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
     return recipe
 
 
@@ -81,3 +109,23 @@ def count_fitubiusers():
 
 def check_fitubiuser(user):
     return FitUbiUser.objects.filter(user=user).exists()
+
+
+def create_fake_fridge():
+    fake = Faker()
+    fake.add_provider(FoodProvider)
+    names = ['test fridge 1', 'test fridge 2']
+    for name in names:
+        unit = random.choice(UNIT)[0]
+        carbs = random.randint(1, 10)
+        fats = random.randint(1, 10)
+        proteins = random.randint(1, 10)
+        calories = random.randint(1, 10)
+        category = random.choice(FOODCAT)[0]
+        specials = fake.text()
+        dangers = fake.text()
+        Ingredient.objects.create(name=name, unit=unit, carbs=carbs,
+                                               fats=fats, proteins=proteins,
+                                               calories=calories, category=category,
+                                               specials=specials, dangers=dangers)
+    return Ingredient.objects.filter(name__icontains='test fridge')
