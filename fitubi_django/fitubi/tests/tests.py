@@ -1,10 +1,11 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from django.shortcuts import reverse
-from django.test import client
 
 from .testutils import *
 from fitubi.choices import DIET_TYPE
+from fitubi.forms import FridgeForm
 
 
 @pytest.mark.django_db
@@ -54,13 +55,29 @@ def test_fridge_view(client, set_up):
 def test_fridge_one_missing(client, set_up):
     user = User.objects.all().first()
     client.login(username=user.username, password='fakefake')
-    url = reverse('fridge')
+    url_reverse = reverse('fridge')
     ingredients = create_fake_fridge()
+    recipe = create_fake_fridge_recipe(ingredients)
     data = {
-        'ingredients': ingredients,
+        'ingredients': [ingredient.id for ingredient in ingredients],
+        'category': recipe.category,
+        'type': [str(DIET_TYPE[0][0])]
     }
-    response = client.post(url, data=data)
-    assert response.status_code == 400
+    form = FridgeForm(data=data)
+    #response = client.post(url_reverse, data=data, content_type='application/x-www-form-urlencoded')
+    response = client.post(url_reverse, data=data)
+    html = response.content
+    soup = BeautifulSoup(html, 'html.parser')
+    list_one_missing = soup.find('ol', {'id': "one_missing"})
+    list_recipes = soup.find('ol', {'id': "match"})
+    recipes_one_missing = list_one_missing.findAll('li')
+    assert response.status_code == 200
+    assert form.is_valid() is True
+    assert len(recipes_one_missing) == 1
+    assert list_one_missing.find(text='fridge recipe')
+    assert list_recipes is None
+
+
 
 # @pytest.mark.django_db
 # def test_get_movie_list(client, set_up):

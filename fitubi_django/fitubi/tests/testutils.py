@@ -92,6 +92,7 @@ def create_fake_recipe():
         ingredient = create_fake_ingredient()
         amount = random.randint(1, 100)
         RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
+    recipe.refresh_from_db()
     return recipe
 
 
@@ -129,3 +130,65 @@ def create_fake_fridge():
                                                calories=calories, category=category,
                                                specials=specials, dangers=dangers)
     return Ingredient.objects.filter(name__icontains='test fridge')
+
+
+def create_fake_fridge_recipe(ingredients):
+    user = create_user()
+    fake = Faker()
+    fake.add_provider(FoodProvider)
+    name = 'fridge recipe'
+    description = fake.dish_description()
+    category = random.choice(RECIPE_CATEGORY)[0]
+    type = str(DIET_TYPE[0][0])
+    recipe = Recipe.objects.create(name=name, description=description,
+                                   category=category, created_by=user,
+                                   type=type)
+    for ingredient in ingredients:
+        amount = random.randint(1, 100)
+        RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
+    ingredient = Ingredient.objects.all().first()
+    amount = random.randint(1, 100)
+    RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
+    recipe.refresh_from_db()
+    return recipe
+
+
+def create_fake_fridge_one():
+    fake = Faker()
+    fake.add_provider(FoodProvider)
+    name = 'test fridge 1'
+    unit = random.choice(UNIT)[0]
+    carbs = random.randint(1, 10)
+    fats = random.randint(1, 10)
+    proteins = random.randint(1, 10)
+    calories = random.randint(1, 10)
+    category = random.choice(FOODCAT)[0]
+    specials = fake.text()
+    dangers = fake.text()
+    ingredient = Ingredient.objects.create(name=name, unit=unit, carbs=carbs,
+                                               fats=fats, proteins=proteins,
+                                               calories=calories, category=category,
+                                               specials=specials, dangers=dangers)
+    return ingredient
+
+
+def create_fake_fridge_recipe_one(ingredient):
+    user = create_user()
+    fake = Faker()
+    fake.add_provider(FoodProvider)
+    name = 'fridge recipe'
+    description = fake.dish_description()
+    category = random.choice(RECIPE_CATEGORY)[0]
+    type = str(DIET_TYPE[0][0])
+    recipe = Recipe.objects.create(name=name, description=description,
+                                   category=category, created_by=user,
+                                   type=type)
+
+    amount = random.randint(1, 100)
+    RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient, amount=amount)
+    ingredient_2 = Ingredient.objects.all().first()
+    amount = random.randint(1, 100)
+    RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient_2, amount=amount)
+    recipe.refresh_from_db()
+    return recipe
+
