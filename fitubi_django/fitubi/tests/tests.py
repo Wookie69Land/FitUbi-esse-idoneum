@@ -16,31 +16,34 @@ def test_user_connection():
     user = create_user()
     assert count_users() == users_count + 1
     assert count_fitubiusers() == fitubiusers_count + 1
-    assert check_fitubiuser(user) == True
+    assert FitUbiUser.objects.filter(user=user).exists() is True
 
 
 @pytest.mark.django_db
 def test_update_multiselectfield():
     recipe = create_fake_recipe()
     length1 = len(recipe.type)
-    recipe.type += str(DIET_TYPE[2][0])
+    recipe.type = [str(DIET_TYPE[1][0]), str(DIET_TYPE[2][0])]
+    recipe.save()
     length2 = len(recipe.type)
-    recipe.type += str(DIET_TYPE[3][0])
+    recipe.type = [str(DIET_TYPE[1][0]), str(DIET_TYPE[2][0]), str(DIET_TYPE[3][0])]
+    recipe.save()
     length3 = len(recipe.type)
-    recipe.type += str(DIET_TYPE[4][0])
+    recipe.type = [str(DIET_TYPE[1][0]), str(DIET_TYPE[2][0]), str(DIET_TYPE[3][0]), str(DIET_TYPE[4][0])]
+    recipe.save()
     length4 = len(recipe.type)
-    recipe.type = str(DIET_TYPE[1][0]) + str(DIET_TYPE[3][0]) + str(DIET_TYPE[4][0])
+    recipe.type = [str(DIET_TYPE[1][0]), str(DIET_TYPE[3][0]), str(DIET_TYPE[4][0])]
+    recipe.save()
     length5 = len(recipe.type)
     types = recipe.type
-    recipe.save()
     recipe.refresh_from_db()
-    length6 = len(recipe.type[0])
+    length6 = len(recipe.type)
     assert length1 == 1
     assert length2 == length1 + 1
     assert length3 == length2 + 1
     assert length4 == length3 + 1
     assert length5 == length4 - 1
-    assert types == '245'
+    assert types == ['2', '4', '5']
     assert length6 == 3
 
 @pytest.mark.django_db

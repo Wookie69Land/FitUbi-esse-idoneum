@@ -108,10 +108,6 @@ def count_fitubiusers():
     return FitUbiUser.objects.all().count()
 
 
-def check_fitubiuser(user):
-    return FitUbiUser.objects.filter(user=user).exists()
-
-
 def create_fake_fridge():
     fake = Faker()
     fake.add_provider(FoodProvider)
