@@ -46,9 +46,10 @@ def test_update_multiselectfield():
     assert types == ['2', '4', '5']
     assert length6 == 3
 
+
 @pytest.mark.django_db
 def test_fridge_view(client, set_up):
-    user = User.objects.all().first()
+    user = User.objects.all().last()
     client.login(username=user.username, password='fakefake')
     url = reverse('fridge')
     response = client.get(url)
@@ -57,7 +58,7 @@ def test_fridge_view(client, set_up):
 
 @pytest.mark.django_db
 def test_fridge(client, set_up):
-    user = User.objects.all().first()
+    user = User.objects.all().last()
     client.login(username=user.username, password='fakefake')
     url_reverse = reverse('fridge')
     ingredients = create_fake_fridge()
