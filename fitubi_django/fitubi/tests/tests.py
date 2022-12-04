@@ -6,6 +6,7 @@ from django.shortcuts import reverse
 from .testutils import *
 from fitubi.choices import DIET_TYPE
 from fitubi.forms import FridgeForm
+from fitubi.models import UserActivatedPlan, UserPlans
 
 
 @pytest.mark.django_db
@@ -52,7 +53,7 @@ def test_fridge_view(client, set_up):
 
 
 @pytest.mark.django_db
-def test_fridge_one_missing(client, set_up):
+def test_fridge(client, set_up):
     user = User.objects.all().first()
     client.login(username=user.username, password='fakefake')
     url_reverse = reverse('fridge')
@@ -74,50 +75,18 @@ def test_fridge_one_missing(client, set_up):
     assert response.status_code == 200
     assert form.is_valid() is True
     assert len(recipes_one_missing) == 1
-    assert list_one_missing.find(text='fridge recipe')
+    assert list_one_missing.find(string='fridge recipe') is not None
     assert list_recipes is None
 
 
+@pytest.mark.django_db
+def test_plan_activation(client, set_up):
+    user = User.objects.all().last()
+    client.login(username=user.username, password='fakefake')
+    plan = create_fake_plan(user)
+    url_reverse = reverse('activate_plan', kwargs={'id': plan.id})
+    response = client.get(url_reverse)
+    assert response.status_code == 302
+    assert UserActivatedPlan.objects.filter(user=user.fitubiuser, plan=plan).exists() is True
+    assert UserPlans.objects.filter(user=user.fitubiuser, plan=plan, operation=3).exists() is True
 
-# @pytest.mark.django_db
-# def test_get_movie_list(client, set_up):
-#     response = client.get("/movies/", {}, format='json')
-#
-#     assert response.status_code == 200
-#     assert Movie.objects.count() == len(response.data)
-#
-#
-# @pytest.mark.django_db
-# def test_get_movie_detail(client, set_up):
-#     movie = Movie.objects.first()
-#     response = client.get(f"/movies/{movie.id}/", {}, format='json')
-#
-#     assert response.status_code == 200
-#     for field in ("title", "year", "description", "director", "actors"):
-#         assert field in response.data
-#
-#
-# @pytest.mark.django_db
-# def test_delete_movie(client, set_up):
-#     movie = Movie.objects.first()
-#     response = client.delete(f"/movies/{movie.id}/", {}, format='json')
-#     assert response.status_code == 204
-#     movie_ids = [movie.id for movie in Movie.objects.all()]
-#     assert movie.id not in movie_ids
-#
-#
-# @pytest.mark.django_db
-# def test_update_movie(client, set_up):
-#     movie = Movie.objects.first()
-#     response = client.get(f"/movies/{movie.id}/", {}, format='json')
-#     movie_data = response.data
-#     new_year = 3
-#     movie_data["year"] = new_year
-#     new_actors = [random_person().name]
-#     movie_data["actors"] = new_actors
-#     response = client.patch(f"/movies/{movie.id}/", movie_data, format='json')
-#     assert response.status_code == 200
-#     movie_obj = Movie.objects.get(id=movie.id)
-#     assert movie_obj.year == new_year
-#     db_actor_names = [actor.name for actor in movie_obj.actors.all()]
-#     assert len(db_actor_names) == len(new_actors)

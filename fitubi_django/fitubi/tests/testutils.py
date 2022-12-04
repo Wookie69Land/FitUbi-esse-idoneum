@@ -4,7 +4,7 @@ from faker_food import FoodProvider
 
 import random
 
-from fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients
+from fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Plan, RecipePlan
 from fitubi.choices import *
 
 
@@ -191,4 +191,13 @@ def create_fake_fridge_recipe_one(ingredient):
     RecipeIngredients.objects.create(recipe=recipe, ingredient=ingredient_2, amount=amount)
     recipe.refresh_from_db()
     return recipe
+
+
+def create_fake_plan(user):
+    fake = Factory.create("en")
+    name = f'Plan for {fake.first_name()}'
+    description = fake.text()
+    created_by = user
+    plan = Plan.objects.create(name=name, description=description, created_by=created_by)
+    return plan
 
