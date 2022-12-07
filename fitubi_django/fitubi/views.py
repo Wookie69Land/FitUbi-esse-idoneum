@@ -958,3 +958,20 @@ class AutomaticPlanView(LoginRequiredMixin, View):
         return redirect(url)
 
 
+class ContactView(LoginRequiredMixin, View):
+    def get_form_kwargs(self):
+        kwargs = super(ContactView, self).get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
+
+    def get(self, request):
+        form = ContactForm(request=request)
+        return render(request, 'contact.html', {'form': form})
+
+    def post(self, request):
+        form = ContactForm(request.POST, request=request)
+        if form.is_valid():
+            form.contact()
+            return HttpResponse('Thank you for contacting FitUbi')
+
+

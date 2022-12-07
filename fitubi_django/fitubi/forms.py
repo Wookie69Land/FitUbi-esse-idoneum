@@ -5,6 +5,7 @@ from django.core.validators import ValidationError
 from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
 from fitubi.fitubi_utils import CONV_OPTIONS
 from .choices import *
+from .tasks import send_message_to_fitubi_task
 
 
 class UserForm(ModelForm):
@@ -129,3 +130,25 @@ class FitUbiPlanForm(forms.Form):
     meals = forms.MultipleChoiceField(label="pick meals per day: ", choices=MEALS)
     goal = forms.ChoiceField(choices=GOALS, required=False)
     type = forms.ChoiceField(choices=DIET_TYPE, required=False)
+
+
+class CustomModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, user):
+        return "%s" % user.username
+
+
+class ContactForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields['user'].queryset = User.objects.filter(pk=self.request.user.id)
+
+    user = CustomModelChoiceField(queryset=None)
+    title = forms.CharField(max_length=32)
+    message = forms.CharField(widget=forms.Textarea(attrs={"rows": "5", 'cols': '20'}))
+
+    def contact(self):
+        send_message_to_fitubi_task.delay(self.cleaned_data['user'].username,
+                                          self.cleaned_data['title'],
+                                          self.cleaned_data['message'])
+

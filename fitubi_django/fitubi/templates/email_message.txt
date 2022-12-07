@@ -1,0 +1,7 @@
+Hello staff member!
+
+Here is a message from {{user|safe}}:
+Title: {{title|safe}}
+Message: {{message|safe}}
+
+Thank you!

@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<section class="vh-100" style="background-color:darkolivegreen">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+          <div class="card-body p-5">
+            <form method="post">
+            {% csrf_token %}
+            <h3 class="mb-5">Share your thoughts with FitUbi team:</h3>
+
+                {{ form.as_p }}
+
+            <button class="btn btn-primary btn-lg btn-block" type="submit" style="background-color:darkolivegreen">
+                Send message</button>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
