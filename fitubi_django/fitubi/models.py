@@ -210,3 +210,11 @@ class UserSettings(models.Model):
 class UserActivatedPlan(models.Model):
     user = models.OneToOneField(FitUbiUser, on_delete=models.CASCADE)
     plan = models.OneToOneField(Plan, on_delete=models.CASCADE)
+
+
+class UserMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=64)
+    message = models.TextField()
+    recipe = models.ForeignKey(Recipe, blank=True, null=True, on_delete=models.SET_NULL)
+    plan = models.ForeignKey(Plan, blank=True, null=True, on_delete=models.SET_NULL)
