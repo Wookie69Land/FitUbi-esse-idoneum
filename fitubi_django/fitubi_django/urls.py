@@ -24,7 +24,7 @@ from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView,
     NewPlanView, PlanModifyView, PlanDetailView, RemoveRecipePlanView, \
     PlanNewModifiedView, AddPlanToFavouritesView, RemovePlanFromFavouritesView, \
     DeletePlanView, AutomaticPlanDecisionView, AutomaticPlanView, ModifyRecipePlanView, \
-    ActivatePlanView, ContactView, UserMessagesView
+    ActivatePlanView, ContactView, UserMessagesView, MessageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -67,4 +67,5 @@ urlpatterns = [
          name='fitubi_plan'),
     path('contact/', ContactView.as_view(), name='contact'),
     path('messages/', UserMessagesView.as_view(), name='messages'),
+    path('messages/<int:id>/', MessageView.as_view(), name='message_details'),
 ]

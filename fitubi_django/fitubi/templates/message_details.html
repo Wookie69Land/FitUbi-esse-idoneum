@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">From</th>
+      <th scope="col">To</th>
+      <th scope="col">Title</th>
+      <th scope="col">Message</th>
+      <th scope="col">Recipe</th>
+      <th scope="col">Plan</th>
+      <th scope="col">Created</th>
+    </tr>
+  </thead>
+  <tbody class="table-group-divider">
+    <tr>
+      <td>
+          {{ user_message.receiver }}
+      </td>
+      <td>
+          {{ user_message.sender }}
+      </td>
+      <td>
+          {{ user_message }}
+      </td>
+      <td>
+          {{ user_message.message }}
+      </td>
+       <td>
+          {{ user_message.recipe }}
+      </td>
+      <td>
+          {{ user_message.plan }}
+      </td>
+      <td>
+          {{ user_message.created }}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}

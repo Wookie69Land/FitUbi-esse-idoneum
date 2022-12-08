@@ -995,3 +995,18 @@ class UserMessagesView(LoginRequiredMixin, View):
             query = request.POST.get('query')
             recipes = Recipe.objects.search(query)
             return render(request, "recipes_list.html", {'recipes': recipes})
+
+
+class MessageView(LoginRequiredMixin, View):
+    def get(self, request, id):
+        user_message = get_object_or_404(UserMessage, pk=id)
+        if user_message.receiver == request.user or user_message.sender == request.user:
+            if user_message.receiver == request.user:
+                user_message.read = True
+                user_message.save()
+            return render(request, 'message_details.html', {'user_message': user_message})
+        else:
+            comment = "You can read only your messages."
+            request.session['comment'] = comment
+            return redirect('profile')
+
