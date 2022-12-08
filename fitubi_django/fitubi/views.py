@@ -972,6 +972,26 @@ class ContactView(LoginRequiredMixin, View):
         form = ContactForm(request.POST, request=request)
         if form.is_valid():
             form.contact()
-            return HttpResponse('Thank you for contacting FitUbi')
+            user = form.cleaned_data.get('user')
+            title = form.cleaned_data.get('title')
+            message = form.cleaned_data.get('message')
+            UserMessage.objects.create(sender=user, receiver_id=1, title=title, message=message)
+            comment = "Thank you for contacting FitUbi."
+            request.session['comment'] = comment
+            return redirect('profile')
+        else:
+            form = ContactForm(request=request)
+            return render(request, 'contact.html', {'form': form})
 
 
+class UserMessagesView(LoginRequiredMixin, View):
+    def get(self, request):
+        messages_from = UserMessage.objects.filter(sender=request.user).order_by('-created')
+        messages_to = UserMessage.objects.filter(receiver=request.user).order_by('-created')
+        return render(request, 'messages.html', {'messages_from': messages_from,
+                                                 'messages_to': messages_to})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})

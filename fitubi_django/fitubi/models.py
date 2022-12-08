@@ -221,3 +221,9 @@ class UserMessage(models.Model):
     recipe = models.ForeignKey(Recipe, blank=True, null=True, on_delete=models.SET_NULL)
     plan = models.ForeignKey(Plan, blank=True, null=True, on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return f'/messages/{self.id}/'

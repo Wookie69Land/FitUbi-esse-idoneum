@@ -1,0 +1,55 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    <div class="btn-group" role="group">
+        <a href="">
+            <button type="button" class="btn btn-primary">new message</button></a>
+        <a href="">
+            <button type="button" class="btn btn-success" style="background-color: darkolivegreen">make all read</button></a>
+    </div><br>
+
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Messages send</th>
+      <th scope="col">Messages received</th>
+    </tr>
+  </thead>
+  <tbody class="table-group-divider">
+    <tr>
+      <td>
+         <table class="table">
+             {% for row in messages_from %}
+             <tr {% if row.read == False %} class="table-danger"
+                     {% else %} class="table-success" {% endif %}>
+                <td>To: <b>{{ row.receiver }}</b></td>
+                <td>Title: <b>{{ row }}</b></td>
+                <td>Created: <b>{{ row.created }}</b></td>
+                <td><a href="{{ row.get_absolute_url }}"><span class="badge bg-primary rounded-pill">
+                    Read </span></a>
+                </td>
+             </tr>
+             {% endfor %}
+         </table>
+      </td>
+      <td>
+         <table class="table">
+             {% for row in messages_to %}
+             <tr {% if row.read == False %} class="table-danger"
+                     {% else %} class="table-success" {% endif %}>
+                <td>To: <b>{{ row.receiver }}</b></td>
+                <td>Title: <b>{{ row }}</b></td>
+                <td>Created: <b>{{ row.created }}</b></td>
+                <td><a href="{{ row.get_absolute_url }}"><span class="badge bg-primary rounded-pill">
+                    Read </span></a>
+                </td>
+             </tr>
+             {% endfor %}
+         </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}

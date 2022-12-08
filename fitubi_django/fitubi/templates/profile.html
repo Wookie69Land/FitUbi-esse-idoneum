@@ -1,143 +1,147 @@
 {% extends "main.html" %}
 
 {% block content %}
-<div class="btn-group" role="group">
-    <a href="{% url 'edit_profile' %}">
-        <button type="button" class="btn btn-primary">edit your profile</button></a>
-    <a href="{% url 'fridge' %}">
-        <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your fridge</button></a>
-    <a href="{% url 'plans' %}">
-        <button type="button" class="btn btn-primary">diet plans</button></a>
-    <a href="{% url 'favourites' %}">
-        <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your favourites</button></a>
+{% if request.session.comment %}
+    <h6 style="color: darkred"> {{ request.session.comment }} </h6>
+{% endif %}
+    <div class="btn-group" role="group">
+        <a href="{% url 'edit_profile' %}">
+            <button type="button" class="btn btn-primary">edit your profile</button></a>
+        <a href="{% url 'fridge' %}">
+            <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your fridge</button></a>
+        <a href="{% url 'plans' %}">
+            <button type="button" class="btn btn-primary">diet plans</button></a>
+        <a href="{% url 'favourites' %}">
+            <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your favourites</button></a>
+        <a href="{% url 'messages' %}">
+            <button type="button" class="btn btn-success" style="background-color: darkolivegreen">your messages</button></a>
+    </div><br>
 
-</div><br>
-
-<div>
     <div>
-        <table class="table table-bordered border-primary">
+        <div>
+            <table class="table table-bordered border-primary">
+                <tr>
+                    <th>
+                        Username:
+                    </th>
+                    <td>
+                        {{ user.username }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Email:
+                    </th>
+                    <td>
+                        {{ user.email }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Age:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.get_age }} years
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Height:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.height }} cm
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Weight:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.weight }} kg
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Sex:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.get_sex_display }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Food preference:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.get_food_preference_display }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Activity:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.get_activity_display }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Currently active plan:
+                    </th>
+                    <td>
+                        {{ user.fitubiuser.useractivatedplan.plan }},
+                        calories per day: {{ user.fitubiuser.useractivatedplan.plan.calories }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table class="table">
+            <thead>
             <tr>
                 <th>
-                    Username:
+                    BMI:
                 </th>
-                <td>
-                    {{ user.username }}
+                <td class="table-info">
+                    The body mass index(BMI) is a measure
+                    that uses your height and weight to work out if your weight is healthy.
+                    (NHS UK)
                 </td>
             </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                <td class="table-dark">
+                    {{ bmi }}
+                </td>
+                <td {% if bmi < 18.6 or bmi >= 30 %}class="table-danger"
+                    {% elif bmi < 30 and bmi >= 25 %}class="table-warning"
+                    {% else %}class="table-success"{% endif %}>
+                    {{ bmi_comment }}
+                </td>
+            </tbody>
+
+        </table>
+            <table class="table">
+            <thead>
             <tr>
                 <th>
-                    Email:
+                    How many calories per day you need:
                 </th>
-                <td>
-                    {{ user.email }}
-                </td>
+
             </tr>
-            <tr>
-                <th>
-                    Age:
-                </th>
-                <td>
-                    {{ user.fitubiuser.get_age }} years
+            </thead>
+            <tbody class="table-group-divider">
+                <td class="table-dark">
+                    {{ bmr }} cal
                 </td>
-            </tr>
-            <tr>
-                <th>
-                    Height:
-                </th>
-                <td>
-                    {{ user.fitubiuser.height }} cm
+                <td class="table-info">
+                    We calculated this according your BMR (basal metabolic rate - depended on height, weight, age)
+                    and your activity level.
                 </td>
-            </tr>
-            <tr>
-                <th>
-                    Weight:
-                </th>
-                <td>
-                    {{ user.fitubiuser.weight }} kg
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Sex:
-                </th>
-                <td>
-                    {{ user.fitubiuser.get_sex_display }}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Food preference:
-                </th>
-                <td>
-                    {{ user.fitubiuser.get_food_preference_display }}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Activity:
-                </th>
-                <td>
-                    {{ user.fitubiuser.get_activity_display }}
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    Currently active plan:
-                </th>
-                <td>
-                    {{ user.fitubiuser.useractivatedplan.plan }},
-                    calories per day: {{ user.fitubiuser.useractivatedplan.plan.calories }}
-                </td>
-            </tr>
+
+            </tbody>
+
         </table>
     </div>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>
-                BMI:
-            </th>
-            <td class="table-info">
-                The body mass index(BMI) is a measure
-                that uses your height and weight to work out if your weight is healthy.
-                (NHS UK)
-            </td>
-        </tr>
-        </thead>
-        <tbody class="table-group-divider">
-            <td class="table-dark">
-                {{ bmi }}
-            </td>
-            <td {% if bmi < 18.6 or bmi >= 30 %}class="table-danger"
-                {% elif bmi < 30 and bmi >= 25 %}class="table-warning"
-                {% else %}class="table-success"{% endif %}>
-                {{ bmi_comment }}
-            </td>
-        </tbody>
-
-    </table>
-        <table class="table">
-        <thead>
-        <tr>
-            <th>
-                How many calories per day you need:
-            </th>
-
-        </tr>
-        </thead>
-        <tbody class="table-group-divider">
-            <td class="table-dark">
-                {{ bmr }} cal
-            </td>
-            <td class="table-info">
-                We calculated this according your BMR (basal metabolic rate - depended on height, weight, age)
-                and your activity level.
-            </td>
-
-        </tbody>
-
-    </table>
-</div>
 
 
 {% endblock %}
