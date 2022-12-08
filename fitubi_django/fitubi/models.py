@@ -213,8 +213,11 @@ class UserActivatedPlan(models.Model):
 
 
 class UserMessage(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
     title = models.CharField(max_length=64)
     message = models.TextField()
+    read = models.BooleanField(default=False)
     recipe = models.ForeignKey(Recipe, blank=True, null=True, on_delete=models.SET_NULL)
     plan = models.ForeignKey(Plan, blank=True, null=True, on_delete=models.SET_NULL)
+    created = models.DateTimeField(auto_now_add=True)
