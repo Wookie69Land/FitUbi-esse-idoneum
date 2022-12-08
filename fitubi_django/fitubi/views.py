@@ -253,15 +253,6 @@ class ModifyIngredientsToRecipe(LoginRequiredMixin, View):
                                                                          'ingredients': ingredients,
                                                                          'form': form,
                                                                          'comment': comment})
-        if 'convert' in request.POST:
-            pass
-        if 'finish' in request.POST:
-            ingredients = RecipeIngredients.objects.filter(recipe=recipe)
-            for row in ingredients:
-                row.amount = request.POST.get(str(row.id))
-                row.save()
-            url = f'/recipe/{recipe.id}'
-            return redirect(url)
 
 
 class RemoveIngredientRecipeView(LoginRequiredMixin, View):
@@ -1009,4 +1000,11 @@ class MessageView(LoginRequiredMixin, View):
             comment = "You can read only your messages."
             request.session['comment'] = comment
             return redirect('profile')
+
+
+class NewMessageView(LoginRequiredMixin, View):
+    def get(self, request):
+        form = MessageForm()
+        return render(request, 'new_message.html', {'form': form})
+
 

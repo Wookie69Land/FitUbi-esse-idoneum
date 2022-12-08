@@ -20,9 +20,6 @@
                                     type="submit" name="add">
                                 Add</button>
 
-                            <button class="btn btn-block" style="background-color: cornflowerblue"
-                                    type="submit" name="convert">
-                                Convert </button>
                         </td>
                         <td>
                             {% for row in ingredients %}
@@ -35,8 +32,9 @@
                     </tr>
                 </tbody>
         </table>
-            <button class="btn btn-primary btn-lg btn-block" type="submit" name="finish">Finish</button>
-
+            <a href="/recipe/{{ recipe.id }}">
+                <span class="badge bg-primary rounded-pill">
+                Finish </span></a>
      </form>
 
 {% endblock %}

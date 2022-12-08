@@ -2,7 +2,8 @@ from django import forms
 from django.forms import ModelForm
 from django.core.validators import ValidationError
 
-from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Article, Plan, RecipePlan
+from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, \
+    Article, Plan, RecipePlan, UserMessage
 from fitubi.fitubi_utils import CONV_OPTIONS
 from .choices import *
 from .tasks import send_message_to_fitubi_task
@@ -67,11 +68,7 @@ class RecipeIngredientsForm(ModelForm):
     ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all().order_by('name'))
     class Meta:
         model = RecipeIngredients
-        fields = ['amount']
-    def __init__(self, *args, **kwargs):
-        super(RecipeIngredientsForm, self).__init__(*args, **kwargs)
-        self.fields['ingredient'].required = False
-        self.fields['amount'].required = False
+        fields = ['ingredient', 'amount']
 
 
 class RecipeSearchForm(ModelForm):
@@ -151,4 +148,13 @@ class ContactForm(forms.Form):
         send_message_to_fitubi_task.delay(self.cleaned_data['user'].username,
                                           self.cleaned_data['title'],
                                           self.cleaned_data['message'])
+
+
+class MessageForm(ModelForm):
+    receiver = forms.ModelChoiceField(queryset=User.objects.all().order_by('username'))
+    recipe = forms.ModelChoiceField(queryset=Recipe.objects.all().order_by('-created'))
+    plan = forms.ModelChoiceField(queryset=Plan.objects.all().order_by('-created'))
+    class Meta:
+        model = UserMessage
+        fields = ['receiver', 'title', 'message', 'recipe', 'plan']
 
