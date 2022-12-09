@@ -24,7 +24,8 @@ from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView,
     NewPlanView, PlanModifyView, PlanDetailView, RemoveRecipePlanView, \
     PlanNewModifiedView, AddPlanToFavouritesView, RemovePlanFromFavouritesView, \
     DeletePlanView, AutomaticPlanDecisionView, AutomaticPlanView, ModifyRecipePlanView, \
-    ActivatePlanView, ContactView, UserMessagesView, MessageView, NewMessageView
+    ActivatePlanView, ContactView, UserMessagesView, MessageView, NewMessageView, \
+    MakeAllMessagesReadView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -69,4 +70,5 @@ urlpatterns = [
     path('messages/', UserMessagesView.as_view(), name='messages'),
     path('messages/<int:id>/', MessageView.as_view(), name='message_details'),
     path('new_message/', NewMessageView.as_view(), name='new_message'),
+    path('make_all_read/', MakeAllMessagesReadView.as_view(), name='make_all_read'),
 ]

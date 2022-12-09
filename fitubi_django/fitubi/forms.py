@@ -158,3 +158,8 @@ class MessageForm(ModelForm):
         model = UserMessage
         fields = ['receiver', 'title', 'message', 'recipe', 'plan']
 
+    def __init__(self, *args, **kwargs):
+        super(MessageForm, self).__init__(*args, **kwargs)
+        self.fields['recipe'].required = False
+        self.fields['plan'].required = False
+

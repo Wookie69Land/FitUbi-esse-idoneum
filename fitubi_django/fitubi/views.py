@@ -977,6 +977,7 @@ class ContactView(LoginRequiredMixin, View):
 
 class UserMessagesView(LoginRequiredMixin, View):
     def get(self, request):
+        clean_comment(request)
         messages_from = UserMessage.objects.filter(sender=request.user).order_by('-created')
         messages_to = UserMessage.objects.filter(receiver=request.user).order_by('-created')
         return render(request, 'messages.html', {'messages_from': messages_from,
@@ -1000,11 +1001,43 @@ class MessageView(LoginRequiredMixin, View):
             comment = "You can read only your messages."
             request.session['comment'] = comment
             return redirect('profile')
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
 
 
 class NewMessageView(LoginRequiredMixin, View):
     def get(self, request):
         form = MessageForm()
         return render(request, 'new_message.html', {'form': form})
+    def post(self, request):
+        if request.POST.get('query'):
+            query = request.POST.get('query')
+            recipes = Recipe.objects.search(query)
+            return render(request, "recipes_list.html", {'recipes': recipes})
+
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            sender = request.user
+            receiver = form.cleaned_data.get('receiver')
+            title = form.cleaned_data.get('title')
+            message = form.cleaned_data.get('message')
+            recipe = form.cleaned_data.get('recipe')
+            plan = form.cleaned_data.get('plan')
+            UserMessage.objects.create(sender=sender, receiver=receiver,
+                                       title=title, message=message,
+                                       recipe=recipe, plan=plan)
+            return redirect('messages')
+
+
+class MakeAllMessagesReadView(LoginRequiredMixin, View):
+    def get(self, request):
+        messages_to = UserMessage.objects.filter(receiver=request.user)
+        for message in messages_to:
+            message.read = True
+            message.save()
+        return redirect('messages')
 
 
