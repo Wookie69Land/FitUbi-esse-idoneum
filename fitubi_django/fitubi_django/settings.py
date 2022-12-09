@@ -24,8 +24,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 try:
     from .local_settings import SECRET_KEY
 except ModuleNotFoundError:
-    print("Brak konfiguracji klucza w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
+    print("No secret key configuration in local_settings.py!")
+    print("Fill in data and try again!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'multiselectfield',
+    'django_celery_beat',
+    'django_celery_results',
     'fitubi',
 ]
 
@@ -85,8 +87,8 @@ WSGI_APPLICATION = 'fitubi_django.wsgi.application'
 try:
     from .local_settings import DATABASES
 except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
+    print("No database configuration in local_settings.py!")
+    print("Fill in data and try again!")
     exit(0)
 
 
@@ -139,10 +141,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 try:
     from .local_settings import celery_client_email_password
 except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
+    print("No configuration of celery fitubi client email in local_settings.py!")
+    print("Fill in data and try again!")
     exit(0)
 
+#EMAIL SETTINGS
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -151,4 +154,16 @@ EMAIL_HOST_PASSWORD = celery_client_email_password
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'fitubi.client@gmail.com'
+
+#CELERY SETTINGS
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+#CELERY BEAT SETTINGS
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
