@@ -209,7 +209,7 @@ class UserSettings(models.Model):
 
 class UserActivatedPlan(models.Model):
     user = models.OneToOneField(FitUbiUser, on_delete=models.CASCADE)
-    plan = models.OneToOneField(Plan, on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 
 
 class UserMessage(models.Model):

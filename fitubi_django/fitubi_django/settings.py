@@ -138,6 +138,9 @@ LOGIN_REDIRECT_URL = '/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+#EMAIL SETTINGS
+
+
 try:
     from .local_settings import celery_client_email_password
 except ModuleNotFoundError:
@@ -145,7 +148,6 @@ except ModuleNotFoundError:
     print("Fill in data and try again!")
     exit(0)
 
-#EMAIL SETTINGS
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
