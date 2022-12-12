@@ -1,0 +1,7 @@
+Hello FitUbi user!
+
+Here is a message from FitUbi staff:
+Title: {{title|safe}}
+Message: {{message|safe}}
+
+Thank you!

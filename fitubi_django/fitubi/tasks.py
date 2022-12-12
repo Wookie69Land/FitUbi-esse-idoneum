@@ -1,11 +1,11 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from .email import send_to_fitubi
+from .email import send_to_fitubi, send_to_all, send_to_users_activated_plan
 from .models import UserActivatedPlan
 
 
@@ -23,21 +23,20 @@ def send_message_to_fitubi_task(user, title, message):
     return send_to_fitubi(user, title, message)
 
 
-@shared_task
-def send_mail_to_all_users(self):
-    users = get_user_model().objects.all()
-    for user in users:
-        pass
-    logger.info("Email to all users send")
-    return "Done"
+@shared_task(name='send_monday_email_to_all_task')
+def send_monday_email_to_all_task():
+    users = User.objects.all()
+    title = "Wish you best week"
+    message = "We want to wish you best possible week on our journey to healthy and fulfilled life. " \
+              "Take care of yourself!"
+    logger.info("Trying to send email to all users!")
+    return send_to_all(users, title, message)
 
 
-@shared_task
-def send_mail_activated_plan(self):
-    users = get_user_model().objects.all()
-    for user in users:
-        if UserActivatedPlan.objects.filter(user=user).exists():
-            pass
+@shared_task(name='send_email_activated_plan_task')
+def send_email_activated_plan_task():
+    active_plans = UserActivatedPlan.objects.all()
+    users = User.objects.filter(useractivatedplan__in=active_plans)
     logger.info("Email to users with activated plan send")
-    return "Done"
+    return send_to_users_activated_plan(users)
 
