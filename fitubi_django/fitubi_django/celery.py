@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
     },
     'send_email_activated_plan_task': {
         'task': 'send_email_activated_plan_task',
-        'schedule': crontab(day_of_week=1, hour=18, minute=40),
+        'schedule': crontab(day_of_week=6, hour=16, minute=0),
     },
 }
 
