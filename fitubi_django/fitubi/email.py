@@ -1,4 +1,4 @@
-from django.template import Context
+#functions for sending emails used by celery
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings

@@ -71,7 +71,9 @@ class NewAccountView(View):
             form_user = UserForm()
             form_fitubi = FitUbiUserForm()
             comment = "Something went wrong. Please try again."
-            return render(request, "register.html", {'form_user': form_user, 'form_fitubi': form_fitubi, 'comment': comment})
+            return render(request, "register.html", {'form_user': form_user,
+                                                     'form_fitubi': form_fitubi,
+                                                     'comment': comment})
 
 
 class MainPageView(View):

@@ -1,3 +1,4 @@
+#functions for creating dummy data
 import random
 
 from faker import Factory, Faker

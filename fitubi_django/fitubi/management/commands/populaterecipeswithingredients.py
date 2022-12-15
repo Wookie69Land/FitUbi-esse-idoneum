@@ -1,3 +1,5 @@
+#command for populating recipes with dummy ingredients
+
 from django.core.management.base import BaseCommand
 from ._private import create_ingredients_for_recipe
 

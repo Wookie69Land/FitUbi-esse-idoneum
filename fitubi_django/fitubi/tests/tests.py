@@ -11,6 +11,7 @@ from fitubi.models import UserActivatedPlan, UserPlans
 
 @pytest.mark.django_db
 def test_user_connection():
+    #testing if signal is working correctly and creating a user is creating also fitubiuser
     users_count = count_users()
     fitubiusers_count = count_fitubiusers()
     user = create_user()
@@ -21,6 +22,7 @@ def test_user_connection():
 
 @pytest.mark.django_db
 def test_update_multiselectfield():
+    #testing if django-multiselectfield is working properly in recipe model
     recipe = create_fake_recipe()
     length1 = len(recipe.type)
     recipe.type = [str(DIET_TYPE[1][0]), str(DIET_TYPE[2][0])]
@@ -49,6 +51,7 @@ def test_update_multiselectfield():
 
 @pytest.mark.django_db
 def test_fridge_view(client, set_up):
+    #testing if FridgeView is working
     user = User.objects.all().last()
     client.login(username=user.username, password='fakefake')
     url = reverse('fridge')
@@ -58,6 +61,7 @@ def test_fridge_view(client, set_up):
 
 @pytest.mark.django_db
 def test_fridge(client, set_up):
+    #testing how FridgeView is working and if passed in context data is correct
     user = User.objects.all().last()
     client.login(username=user.username, password='fakefake')
     url_reverse = reverse('fridge')
@@ -85,6 +89,7 @@ def test_fridge(client, set_up):
 
 @pytest.mark.django_db
 def test_plan_activation(client, set_up):
+    #testing user activation of plan
     user = User.objects.all().last()
     client.login(username=user.username, password='fakefake')
     plan = create_fake_plan(user)
