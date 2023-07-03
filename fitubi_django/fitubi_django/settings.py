@@ -21,18 +21,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-try:
-    from .local_settings import SECRET_KEY
-except ModuleNotFoundError:
-    print("No secret key configuration in local_settings.py!")
-    print("Fill in data and try again!")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*',]
+ALLOWED_HOSTS = ['*']
 
+# SECURITY WARNING: keep the secret key used in production secret!
+if not DEBUG:
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+else:
+    try:
+        from .local_settings import SECRET_KEY
+    except ModuleNotFoundError:
+        print("No secret key configuration in local_settings.py!")
+        print("Fill in data and try again!")
 
 # Application definition
 
@@ -87,15 +90,18 @@ WSGI_APPLICATION = 'fitubi_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-try:
-    from .local_settings import DATABASES
-except ModuleNotFoundError:
-    print("No database configuration in local_settings.py!")
-    print("Fill in data and try again!")
-    exit(0)
+if not DEBUG:
+    DATABASES = {'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))}
+else:
+    try:
+        from .local_settings import DATABASES
+    except ModuleNotFoundError:
+        print("No database configuration in local_settings.py!")
+        print("Fill in data and try again!")
+        exit(0)
 
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+# db_from_env = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
