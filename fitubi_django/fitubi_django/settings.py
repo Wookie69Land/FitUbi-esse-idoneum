@@ -152,13 +152,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #EMAIL SETTINGS
 
-
-try:
-    from .local_settings import celery_client_email_password
-except ModuleNotFoundError:
-    print("No configuration of celery fitubi client email in local_settings.py!")
-    print("Fill in data and try again!")
-    exit(0)
+if not DEBUG:
+    celery_client_email_password = ''
+else:
+    try:
+        from .local_settings import celery_client_email_password
+    except ModuleNotFoundError:
+        print("No configuration of celery fitubi client email in local_settings.py!")
+        print("Fill in data and try again!")
+        exit(0)
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
