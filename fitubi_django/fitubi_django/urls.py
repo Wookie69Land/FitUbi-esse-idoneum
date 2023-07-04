@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView, \
+from fitubi_django.fitubi.views import StartPageView, LoginView, NewAccountView, MainPageView, \
     RecipesListView, LogoutView, RecipeDetailsView, ModifyRecipeView, \
     ModifyIngredientsToRecipe, RemoveIngredientRecipeView, DeleteRecipeView, \
     AddRecipeToFavouritesView, CreateModifiedRecipeView, CreateRecipeView, \

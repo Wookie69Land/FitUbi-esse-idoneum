@@ -4,8 +4,8 @@ from faker_food import FoodProvider
 
 import random
 
-from fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Plan, RecipePlan
-from fitubi.choices import *
+from fitubi_django.fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, Plan, RecipePlan
+from fitubi_django.fitubi.choices import *
 
 
 faker = Faker("en")

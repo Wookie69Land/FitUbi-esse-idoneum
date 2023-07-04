@@ -6,4 +6,4 @@ class FibubiConfig(AppConfig):
     name = 'fitubi'
 
     def ready(self):
-        from fitubi.models import create_user_profile
+        from .models import create_user_profile

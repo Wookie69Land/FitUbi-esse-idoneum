@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup
 from django.shortcuts import reverse
 
 from .testutils import *
-from fitubi.choices import DIET_TYPE
-from fitubi.forms import FridgeForm
-from fitubi.models import UserActivatedPlan, UserPlans
+from fitubi_django.fitubi.choices import DIET_TYPE
+from fitubi_django.fitubi.forms import FridgeForm
+from fitubi_django.fitubi.models import UserActivatedPlan, UserPlans
 
 
 @pytest.mark.django_db

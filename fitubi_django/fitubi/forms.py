@@ -4,7 +4,7 @@ from django.core.validators import ValidationError
 
 from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, \
     Article, Plan, RecipePlan, UserMessage
-from fitubi.fitubi_utils import CONV_OPTIONS
+from .fitubi_utils import CONV_OPTIONS
 from .choices import *
 from .tasks import send_message_to_fitubi_task
 
