@@ -94,7 +94,8 @@ if not DEBUG:
     DATABASES = {'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))}
 else:
     try:
-        from .local_settings import DATABASES
+        from .local_settings import DATABASES_URL
+        DATABASES = {'default': dj_database_url.parse(DATABASES_URL)}
     except ModuleNotFoundError:
         print("No database configuration in local_settings.py!")
         print("Fill in data and try again!")
