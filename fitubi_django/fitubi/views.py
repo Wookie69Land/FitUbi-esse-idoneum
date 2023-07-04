@@ -7,9 +7,9 @@ from django.core.paginator import Paginator
 
 import random
 
-from .models import *
-from .forms import *
-from .fitubi_utils import *
+from fitubi.models import *
+from fitubi.forms import *
+from fitubi.fitubi_utils import *
 
 
 class StartPageView(View):

@@ -1,4 +1,4 @@
-from .models import RecipeIngredients, RecipePlan, Recipe
+from fitubi.models import RecipeIngredients, RecipePlan, Recipe
 import functools
 import collections
 from playsound import playsound

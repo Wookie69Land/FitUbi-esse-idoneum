@@ -2,11 +2,11 @@ from django import forms
 from django.forms import ModelForm
 from django.core.validators import ValidationError
 
-from .models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, \
+from fitubi.models import User, FitUbiUser, Ingredient, Recipe, RecipeIngredients, \
     Article, Plan, RecipePlan, UserMessage
-from .fitubi_utils import CONV_OPTIONS
-from .choices import *
-from .tasks import send_message_to_fitubi_task
+from fitubi.fitubi_utils import CONV_OPTIONS
+from fitubi.choices import *
+from fitubi.tasks import send_message_to_fitubi_task
 
 
 class UserForm(ModelForm):

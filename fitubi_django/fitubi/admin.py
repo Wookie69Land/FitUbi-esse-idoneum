@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import FitUbiUser, Recipe, RecipeIngredients, UserRecipes, Ingredient
+from fitubi.models import FitUbiUser, Recipe, RecipeIngredients, UserRecipes, Ingredient
 
 admin.site.register(FitUbiUser)
 admin.site.register(Recipe)

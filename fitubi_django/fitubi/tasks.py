@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
-from .email import send_to_fitubi, send_to_all, send_to_users_activated_plan
-from .models import UserActivatedPlan
+from fitubi.email import send_to_fitubi, send_to_all, send_to_users_activated_plan
+from fitubi.models import UserActivatedPlan
 
 
 logger = get_task_logger(__name__)

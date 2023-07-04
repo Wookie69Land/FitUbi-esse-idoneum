@@ -4,8 +4,8 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 
-from .models import UserActivatedPlan, RecipePlan
-from .fitubi_utils import process_plan_week
+from fitubi.models import UserActivatedPlan, RecipePlan
+from fitubi.fitubi_utils import process_plan_week
 
 
 def send_to_fitubi(user, title, message):
