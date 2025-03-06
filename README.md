@@ -21,6 +21,4 @@ Create user, login and have fun.
 _Warning! Automatic creating plan feature is simplified and not working as planned. 
 Author intends to replace function with AI in the future for optimizing results._
 
-_Post Scriptum: this is my first application ever and any tips, ideas and code reviews are appreciated._
-
 Thank you.
